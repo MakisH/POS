@@ -1,0 +1,3 @@
+Questions - Worksheet 1
+* What are the LDFLAGS?
+* Shall we use the job class "micro"?
