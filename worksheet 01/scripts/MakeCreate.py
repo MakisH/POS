@@ -25,5 +25,5 @@ for i in range(1,len(intel)-1):
 				
 		file.write(flag_string[j])
 		file.write("\n")
-	#TODO write string to file
+	#TODO input flags into Makefile at deesired position with desired syntax
 file.close()
