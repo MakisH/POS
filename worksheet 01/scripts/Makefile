@@ -27,7 +27,7 @@ OBJECTS2.0 = $(SOURCES2.0:.cc=.o)
 # Our config for serial run
 CXXFLAGS = -O3 -I. -w, 
 
-# INSERT FLAG LIST HERE
+#flag_list
 
 LDFLAGS = -O3
 
@@ -48,8 +48,8 @@ LDFLAGS = -O3
 	$(CXX) -c $(CXXFLAGS) -o $@  $<
 
 all: $(LULESH_EXEC)
-
-# INSERT TARGET LIST HERE
+	
+#target_list
 
 lulesh2.0: $(OBJECTS2.0)
 	@echo "Linking"
