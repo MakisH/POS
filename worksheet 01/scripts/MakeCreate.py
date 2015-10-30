@@ -13,14 +13,15 @@ def find(l, s):
     return None # Or -1
 
 numbers = ["1","2","3","4","5"]
-intel = ["-march = native","-fomit-fram-pointer","-floop-block","floop-interchange","floop-strip-mine","funroll-loops","-flto"]
+intel = ["-march = native","-fomit-fram-pointer","-floop-block","-floop-interchange","-floop-strip-mine","-funroll-loops","-flto"]
 f_handle = open('Makefile','r+')
 #fileinput.filename()
 
-for i in range(1,len(intel)):
+flag_string = []
 
+for i in range(1,len(intel)):
 	combination = list(itertools.combinations(intel,i)) 
-	flag_string= map(' '.join,combination)
+	flag_string.extend(map(' '.join,combination))
 	
 flag_searchline = '#flag_list'
 target_searchline = '#target_list'
@@ -36,10 +37,10 @@ print flags_index
 print targets_index
 
 for j in range(0,len(flag_string)):
-	flag_lines += "CXXFLAGS_i = -O3 -I. -w " + flag_string[j] + "\n"
+	flag_lines += "CXXFLAGS_" + str(j) + " = -O3 -I. -w " + flag_string[j] + "\n"
 
 for k in range(0,len(flag_string)):
-	target_lines += "name_" + str(k) + ": lulesh.h $(CXX) -c $(CXXFLAGS_" + str(k) + " -o $@  $< " + "\n" 
+	target_lines += "name_" + str(k) + ":" + "\n\t" + "lulesh.h" + "\n\t" + "$(CXX) -c $(CXXFLAGS_" + str(k) + ") -o $@  $< " + "\n" 
 
 lines.insert(flags_index, flag_lines)
 lines.insert(targets_index, target_lines)
