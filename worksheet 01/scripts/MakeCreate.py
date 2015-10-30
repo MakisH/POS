@@ -6,10 +6,15 @@ import sys
 import time
 import fileinput
 
-f_handle = open('testfile','w')
+def find(l, s):
+    for i in range(len(l)):
+        if l[i].find(s)!=-1:
+            return i
+    return None # Or -1
+
 numbers = ["1","2","3","4","5"]
 intel = ["-march = native","-fomit-fram-pointer","-floop-block","floop-interchange","floop-strip-mine","funroll-loops","-flto"]
-f_handle = open('testfile','w')
+f_handle = open('Makefile','r+')
 #fileinput.filename()
 
 for i in range(1,len(intel)):
@@ -17,21 +22,31 @@ for i in range(1,len(intel)):
 	combination = list(itertools.combinations(intel,i)) 
 	flag_string= map(' '.join,combination)
 	
-	flag_searchline = '#flag_list'
-	target_searchline = '#target_list'
+flag_searchline = '#flag_list'
+target_searchline = '#target_list'
 
-	lines = f_handle.readlines()
-	flags_index = lines.index(flag_searchline)
-	targets_index =  lines.index(target_searchline)
+lines = f_handle.readlines()
+flags_index = find(lines, flag_searchline)
+targets_index =  find(lines, target_searchline)
 
-	for j in range(0,len(flag_string)):
-		flag_lines += "CXXFLAGS_i = -O3 -I. -w " + flag_string[j] + "\n"
+flag_lines = " "
+target_lines = " "
 
-	for k in range(0,len(flag_string)):
-		target_lines += "name_" + k + ": lulesh.h $(CXX) -c $(CXXFLAGS_" + k + " -o $@  $< " + "\n" 
+print flags_index
+print targets_index
 
-	for line in f_handle
-		lines.insert(flags_index, flag_lines)
-		lines.insert(targets_index, target_lines)
+for j in range(0,len(flag_string)):
+	flag_lines += "CXXFLAGS_i = -O3 -I. -w " + flag_string[j] + "\n"
 
-file.close()
+for k in range(0,len(flag_string)):
+	target_lines += "name_" + str(k) + ": lulesh.h $(CXX) -c $(CXXFLAGS_" + str(k) + " -o $@  $< " + "\n" 
+
+lines.insert(flags_index, flag_lines)
+lines.insert(targets_index, target_lines)
+
+f_handle.close()
+
+new_f_handle = open("new_Makefile", "w")
+new_lines = "".join(lines)
+new_f_handle.write(new_lines)
+new_f_handle.close()
