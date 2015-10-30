@@ -1,3 +1,5 @@
 Questions - Worksheet 1
-* What are the LDFLAGS?
+* What are the LDFLAGS? - Linker flags
 * Shall we use the job class "micro"?
+* Error while trying to use -floop-block with gcc 4.8, other errors with gcc 5.0.
+* Is the total time the performance metric we are looking for?
