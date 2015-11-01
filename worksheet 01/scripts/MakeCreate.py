@@ -1,4 +1,4 @@
-#!/usr/bin/pyton
+#!/usr/bin/python
 
 import itertools
 import os
@@ -28,7 +28,7 @@ target_searchline = '#target_list'
 
 lines = f_handle.readlines()
 flags_index = find(lines, flag_searchline)
-targets_index =  find(lines, target_searchline)
+targets_index = find(lines, target_searchline)
 
 flag_lines = " "
 target_lines = " "
@@ -40,7 +40,7 @@ for j in range(0,len(flag_string)):
 	flag_lines += "CXXFLAGS_" + str(j) + " = -O3 -I. -w " + flag_string[j] + "\n"
 
 for k in range(0,len(flag_string)):
-	target_lines += "name_" + str(k) + ":" + "\n\t" + "lulesh.h" + "\n\t" + "$(CXX) -c $(CXXFLAGS_" + str(k) + ") -o $@  $< " + "\n" 
+	target_lines += "target_" + str(k) + ":" + "\n\t" + "lulesh.h" + "\n\t" + "$(CXX) -c $(CXXFLAGS_" + str(k) + ") -o $@  $< " + "\n" 
 
 lines.insert(flags_index, flag_lines)
 lines.insert(targets_index, target_lines)

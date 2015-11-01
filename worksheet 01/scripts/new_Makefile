@@ -27,132 +27,132 @@ OBJECTS2.0 = $(SOURCES2.0:.cc=.o)
 # Our config for serial run
 CXXFLAGS = -O3 -I. -w, 
 
- CXXFLAGS_0= -O3 -I. -w -march = native
-CXXFLAGS_1= -O3 -I. -w -fomit-fram-pointer
-CXXFLAGS_2= -O3 -I. -w -floop-block
-CXXFLAGS_3= -O3 -I. -w -floop-interchange
-CXXFLAGS_4= -O3 -I. -w -floop-strip-mine
-CXXFLAGS_5= -O3 -I. -w -funroll-loops
-CXXFLAGS_6= -O3 -I. -w -flto
-CXXFLAGS_7= -O3 -I. -w -march = native -fomit-fram-pointer
-CXXFLAGS_8= -O3 -I. -w -march = native -floop-block
-CXXFLAGS_9= -O3 -I. -w -march = native -floop-interchange
-CXXFLAGS_10= -O3 -I. -w -march = native -floop-strip-mine
-CXXFLAGS_11= -O3 -I. -w -march = native -funroll-loops
-CXXFLAGS_12= -O3 -I. -w -march = native -flto
-CXXFLAGS_13= -O3 -I. -w -fomit-fram-pointer -floop-block
-CXXFLAGS_14= -O3 -I. -w -fomit-fram-pointer -floop-interchange
-CXXFLAGS_15= -O3 -I. -w -fomit-fram-pointer -floop-strip-mine
-CXXFLAGS_16= -O3 -I. -w -fomit-fram-pointer -funroll-loops
-CXXFLAGS_17= -O3 -I. -w -fomit-fram-pointer -flto
-CXXFLAGS_18= -O3 -I. -w -floop-block -floop-interchange
-CXXFLAGS_19= -O3 -I. -w -floop-block -floop-strip-mine
-CXXFLAGS_20= -O3 -I. -w -floop-block -funroll-loops
-CXXFLAGS_21= -O3 -I. -w -floop-block -flto
-CXXFLAGS_22= -O3 -I. -w -floop-interchange -floop-strip-mine
-CXXFLAGS_23= -O3 -I. -w -floop-interchange -funroll-loops
-CXXFLAGS_24= -O3 -I. -w -floop-interchange -flto
-CXXFLAGS_25= -O3 -I. -w -floop-strip-mine -funroll-loops
-CXXFLAGS_26= -O3 -I. -w -floop-strip-mine -flto
-CXXFLAGS_27= -O3 -I. -w -funroll-loops -flto
-CXXFLAGS_28= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block
-CXXFLAGS_29= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange
-CXXFLAGS_30= -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine
-CXXFLAGS_31= -O3 -I. -w -march = native -fomit-fram-pointer -funroll-loops
-CXXFLAGS_32= -O3 -I. -w -march = native -fomit-fram-pointer -flto
-CXXFLAGS_33= -O3 -I. -w -march = native -floop-block -floop-interchange
-CXXFLAGS_34= -O3 -I. -w -march = native -floop-block -floop-strip-mine
-CXXFLAGS_35= -O3 -I. -w -march = native -floop-block -funroll-loops
-CXXFLAGS_36= -O3 -I. -w -march = native -floop-block -flto
-CXXFLAGS_37= -O3 -I. -w -march = native -floop-interchange -floop-strip-mine
-CXXFLAGS_38= -O3 -I. -w -march = native -floop-interchange -funroll-loops
-CXXFLAGS_39= -O3 -I. -w -march = native -floop-interchange -flto
-CXXFLAGS_40= -O3 -I. -w -march = native -floop-strip-mine -funroll-loops
-CXXFLAGS_41= -O3 -I. -w -march = native -floop-strip-mine -flto
-CXXFLAGS_42= -O3 -I. -w -march = native -funroll-loops -flto
-CXXFLAGS_43= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange
-CXXFLAGS_44= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine
-CXXFLAGS_45= -O3 -I. -w -fomit-fram-pointer -floop-block -funroll-loops
-CXXFLAGS_46= -O3 -I. -w -fomit-fram-pointer -floop-block -flto
-CXXFLAGS_47= -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine
-CXXFLAGS_48= -O3 -I. -w -fomit-fram-pointer -floop-interchange -funroll-loops
-CXXFLAGS_49= -O3 -I. -w -fomit-fram-pointer -floop-interchange -flto
-CXXFLAGS_50= -O3 -I. -w -fomit-fram-pointer -floop-strip-mine -funroll-loops
-CXXFLAGS_51= -O3 -I. -w -fomit-fram-pointer -floop-strip-mine -flto
-CXXFLAGS_52= -O3 -I. -w -fomit-fram-pointer -funroll-loops -flto
-CXXFLAGS_53= -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine
-CXXFLAGS_54= -O3 -I. -w -floop-block -floop-interchange -funroll-loops
-CXXFLAGS_55= -O3 -I. -w -floop-block -floop-interchange -flto
-CXXFLAGS_56= -O3 -I. -w -floop-block -floop-strip-mine -funroll-loops
-CXXFLAGS_57= -O3 -I. -w -floop-block -floop-strip-mine -flto
-CXXFLAGS_58= -O3 -I. -w -floop-block -funroll-loops -flto
-CXXFLAGS_59= -O3 -I. -w -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_60= -O3 -I. -w -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_61= -O3 -I. -w -floop-interchange -funroll-loops -flto
-CXXFLAGS_62= -O3 -I. -w -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_63= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange
-CXXFLAGS_64= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine
-CXXFLAGS_65= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -funroll-loops
-CXXFLAGS_66= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -flto
-CXXFLAGS_67= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine
-CXXFLAGS_68= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -funroll-loops
-CXXFLAGS_69= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -flto
-CXXFLAGS_70= -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine -funroll-loops
-CXXFLAGS_71= -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine -flto
-CXXFLAGS_72= -O3 -I. -w -march = native -fomit-fram-pointer -funroll-loops -flto
-CXXFLAGS_73= -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine
-CXXFLAGS_74= -O3 -I. -w -march = native -floop-block -floop-interchange -funroll-loops
-CXXFLAGS_75= -O3 -I. -w -march = native -floop-block -floop-interchange -flto
-CXXFLAGS_76= -O3 -I. -w -march = native -floop-block -floop-strip-mine -funroll-loops
-CXXFLAGS_77= -O3 -I. -w -march = native -floop-block -floop-strip-mine -flto
-CXXFLAGS_78= -O3 -I. -w -march = native -floop-block -funroll-loops -flto
-CXXFLAGS_79= -O3 -I. -w -march = native -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_80= -O3 -I. -w -march = native -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_81= -O3 -I. -w -march = native -floop-interchange -funroll-loops -flto
-CXXFLAGS_82= -O3 -I. -w -march = native -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_83= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine
-CXXFLAGS_84= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops
-CXXFLAGS_85= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -flto
-CXXFLAGS_86= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops
-CXXFLAGS_87= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine -flto
-CXXFLAGS_88= -O3 -I. -w -fomit-fram-pointer -floop-block -funroll-loops -flto
-CXXFLAGS_89= -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_90= -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_91= -O3 -I. -w -fomit-fram-pointer -floop-interchange -funroll-loops -flto
-CXXFLAGS_92= -O3 -I. -w -fomit-fram-pointer -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_93= -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_94= -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_95= -O3 -I. -w -floop-block -floop-interchange -funroll-loops -flto
-CXXFLAGS_96= -O3 -I. -w -floop-block -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_97= -O3 -I. -w -floop-interchange -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_98= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine
-CXXFLAGS_99= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops
-CXXFLAGS_100= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -flto
-CXXFLAGS_101= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops
-CXXFLAGS_102= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine -flto
-CXXFLAGS_103= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -funroll-loops -flto
-CXXFLAGS_104= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_105= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_106= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -funroll-loops -flto
-CXXFLAGS_107= -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_108= -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_109= -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_110= -O3 -I. -w -march = native -floop-block -floop-interchange -funroll-loops -flto
-CXXFLAGS_111= -O3 -I. -w -march = native -floop-block -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_112= -O3 -I. -w -march = native -floop-interchange -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_113= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_114= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_115= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops -flto
-CXXFLAGS_116= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_117= -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_118= -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_119= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -funroll-loops
-CXXFLAGS_120= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -flto
-CXXFLAGS_121= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops -flto
-CXXFLAGS_122= -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_123= -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_124= -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine -funroll-loops -flto
-CXXFLAGS_125= -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_0 = -O3 -I. -w -march = native
+CXXFLAGS_1 = -O3 -I. -w -fomit-fram-pointer
+CXXFLAGS_2 = -O3 -I. -w -floop-block
+CXXFLAGS_3 = -O3 -I. -w -floop-interchange
+CXXFLAGS_4 = -O3 -I. -w -floop-strip-mine
+CXXFLAGS_5 = -O3 -I. -w -funroll-loops
+CXXFLAGS_6 = -O3 -I. -w -flto
+CXXFLAGS_7 = -O3 -I. -w -march = native -fomit-fram-pointer
+CXXFLAGS_8 = -O3 -I. -w -march = native -floop-block
+CXXFLAGS_9 = -O3 -I. -w -march = native -floop-interchange
+CXXFLAGS_10 = -O3 -I. -w -march = native -floop-strip-mine
+CXXFLAGS_11 = -O3 -I. -w -march = native -funroll-loops
+CXXFLAGS_12 = -O3 -I. -w -march = native -flto
+CXXFLAGS_13 = -O3 -I. -w -fomit-fram-pointer -floop-block
+CXXFLAGS_14 = -O3 -I. -w -fomit-fram-pointer -floop-interchange
+CXXFLAGS_15 = -O3 -I. -w -fomit-fram-pointer -floop-strip-mine
+CXXFLAGS_16 = -O3 -I. -w -fomit-fram-pointer -funroll-loops
+CXXFLAGS_17 = -O3 -I. -w -fomit-fram-pointer -flto
+CXXFLAGS_18 = -O3 -I. -w -floop-block -floop-interchange
+CXXFLAGS_19 = -O3 -I. -w -floop-block -floop-strip-mine
+CXXFLAGS_20 = -O3 -I. -w -floop-block -funroll-loops
+CXXFLAGS_21 = -O3 -I. -w -floop-block -flto
+CXXFLAGS_22 = -O3 -I. -w -floop-interchange -floop-strip-mine
+CXXFLAGS_23 = -O3 -I. -w -floop-interchange -funroll-loops
+CXXFLAGS_24 = -O3 -I. -w -floop-interchange -flto
+CXXFLAGS_25 = -O3 -I. -w -floop-strip-mine -funroll-loops
+CXXFLAGS_26 = -O3 -I. -w -floop-strip-mine -flto
+CXXFLAGS_27 = -O3 -I. -w -funroll-loops -flto
+CXXFLAGS_28 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block
+CXXFLAGS_29 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange
+CXXFLAGS_30 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine
+CXXFLAGS_31 = -O3 -I. -w -march = native -fomit-fram-pointer -funroll-loops
+CXXFLAGS_32 = -O3 -I. -w -march = native -fomit-fram-pointer -flto
+CXXFLAGS_33 = -O3 -I. -w -march = native -floop-block -floop-interchange
+CXXFLAGS_34 = -O3 -I. -w -march = native -floop-block -floop-strip-mine
+CXXFLAGS_35 = -O3 -I. -w -march = native -floop-block -funroll-loops
+CXXFLAGS_36 = -O3 -I. -w -march = native -floop-block -flto
+CXXFLAGS_37 = -O3 -I. -w -march = native -floop-interchange -floop-strip-mine
+CXXFLAGS_38 = -O3 -I. -w -march = native -floop-interchange -funroll-loops
+CXXFLAGS_39 = -O3 -I. -w -march = native -floop-interchange -flto
+CXXFLAGS_40 = -O3 -I. -w -march = native -floop-strip-mine -funroll-loops
+CXXFLAGS_41 = -O3 -I. -w -march = native -floop-strip-mine -flto
+CXXFLAGS_42 = -O3 -I. -w -march = native -funroll-loops -flto
+CXXFLAGS_43 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange
+CXXFLAGS_44 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine
+CXXFLAGS_45 = -O3 -I. -w -fomit-fram-pointer -floop-block -funroll-loops
+CXXFLAGS_46 = -O3 -I. -w -fomit-fram-pointer -floop-block -flto
+CXXFLAGS_47 = -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine
+CXXFLAGS_48 = -O3 -I. -w -fomit-fram-pointer -floop-interchange -funroll-loops
+CXXFLAGS_49 = -O3 -I. -w -fomit-fram-pointer -floop-interchange -flto
+CXXFLAGS_50 = -O3 -I. -w -fomit-fram-pointer -floop-strip-mine -funroll-loops
+CXXFLAGS_51 = -O3 -I. -w -fomit-fram-pointer -floop-strip-mine -flto
+CXXFLAGS_52 = -O3 -I. -w -fomit-fram-pointer -funroll-loops -flto
+CXXFLAGS_53 = -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine
+CXXFLAGS_54 = -O3 -I. -w -floop-block -floop-interchange -funroll-loops
+CXXFLAGS_55 = -O3 -I. -w -floop-block -floop-interchange -flto
+CXXFLAGS_56 = -O3 -I. -w -floop-block -floop-strip-mine -funroll-loops
+CXXFLAGS_57 = -O3 -I. -w -floop-block -floop-strip-mine -flto
+CXXFLAGS_58 = -O3 -I. -w -floop-block -funroll-loops -flto
+CXXFLAGS_59 = -O3 -I. -w -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_60 = -O3 -I. -w -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_61 = -O3 -I. -w -floop-interchange -funroll-loops -flto
+CXXFLAGS_62 = -O3 -I. -w -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_63 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange
+CXXFLAGS_64 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine
+CXXFLAGS_65 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -funroll-loops
+CXXFLAGS_66 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -flto
+CXXFLAGS_67 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine
+CXXFLAGS_68 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -funroll-loops
+CXXFLAGS_69 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -flto
+CXXFLAGS_70 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine -funroll-loops
+CXXFLAGS_71 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine -flto
+CXXFLAGS_72 = -O3 -I. -w -march = native -fomit-fram-pointer -funroll-loops -flto
+CXXFLAGS_73 = -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine
+CXXFLAGS_74 = -O3 -I. -w -march = native -floop-block -floop-interchange -funroll-loops
+CXXFLAGS_75 = -O3 -I. -w -march = native -floop-block -floop-interchange -flto
+CXXFLAGS_76 = -O3 -I. -w -march = native -floop-block -floop-strip-mine -funroll-loops
+CXXFLAGS_77 = -O3 -I. -w -march = native -floop-block -floop-strip-mine -flto
+CXXFLAGS_78 = -O3 -I. -w -march = native -floop-block -funroll-loops -flto
+CXXFLAGS_79 = -O3 -I. -w -march = native -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_80 = -O3 -I. -w -march = native -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_81 = -O3 -I. -w -march = native -floop-interchange -funroll-loops -flto
+CXXFLAGS_82 = -O3 -I. -w -march = native -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_83 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine
+CXXFLAGS_84 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops
+CXXFLAGS_85 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -flto
+CXXFLAGS_86 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops
+CXXFLAGS_87 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine -flto
+CXXFLAGS_88 = -O3 -I. -w -fomit-fram-pointer -floop-block -funroll-loops -flto
+CXXFLAGS_89 = -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_90 = -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_91 = -O3 -I. -w -fomit-fram-pointer -floop-interchange -funroll-loops -flto
+CXXFLAGS_92 = -O3 -I. -w -fomit-fram-pointer -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_93 = -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_94 = -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_95 = -O3 -I. -w -floop-block -floop-interchange -funroll-loops -flto
+CXXFLAGS_96 = -O3 -I. -w -floop-block -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_97 = -O3 -I. -w -floop-interchange -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_98 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine
+CXXFLAGS_99 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops
+CXXFLAGS_100 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -flto
+CXXFLAGS_101 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops
+CXXFLAGS_102 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine -flto
+CXXFLAGS_103 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -funroll-loops -flto
+CXXFLAGS_104 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_105 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_106 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -funroll-loops -flto
+CXXFLAGS_107 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_108 = -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_109 = -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_110 = -O3 -I. -w -march = native -floop-block -floop-interchange -funroll-loops -flto
+CXXFLAGS_111 = -O3 -I. -w -march = native -floop-block -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_112 = -O3 -I. -w -march = native -floop-interchange -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_113 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_114 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_115 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops -flto
+CXXFLAGS_116 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_117 = -O3 -I. -w -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_118 = -O3 -I. -w -floop-block -floop-interchange -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_119 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -funroll-loops
+CXXFLAGS_120 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -flto
+CXXFLAGS_121 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-interchange -funroll-loops -flto
+CXXFLAGS_122 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-block -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_123 = -O3 -I. -w -march = native -fomit-fram-pointer -floop-interchange -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_124 = -O3 -I. -w -march = native -floop-block -floop-interchange -floop-strip-mine -funroll-loops -flto
+CXXFLAGS_125 = -O3 -I. -w -fomit-fram-pointer -floop-block -floop-interchange -floop-strip-mine -funroll-loops -flto
 #flag_list
 
 LDFLAGS = -O3
@@ -174,382 +174,383 @@ LDFLAGS = -O3
 	$(CXX) -c $(CXXFLAGS) -o $@  $<
 
 all: $(LULESH_EXEC)
- name_0:
+
+target_0:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_0) -o $@  $< 
-name_1:
+target_1:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_1) -o $@  $< 
-name_2:
+target_2:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_2) -o $@  $< 
-name_3:
+target_3:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_3) -o $@  $< 
-name_4:
+target_4:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_4) -o $@  $< 
-name_5:
+target_5:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_5) -o $@  $< 
-name_6:
+target_6:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_6) -o $@  $< 
-name_7:
+target_7:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_7) -o $@  $< 
-name_8:
+target_8:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_8) -o $@  $< 
-name_9:
+target_9:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_9) -o $@  $< 
-name_10:
+target_10:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_10) -o $@  $< 
-name_11:
+target_11:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_11) -o $@  $< 
-name_12:
+target_12:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_12) -o $@  $< 
-name_13:
+target_13:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_13) -o $@  $< 
-name_14:
+target_14:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_14) -o $@  $< 
-name_15:
+target_15:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_15) -o $@  $< 
-name_16:
+target_16:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_16) -o $@  $< 
-name_17:
+target_17:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_17) -o $@  $< 
-name_18:
+target_18:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_18) -o $@  $< 
-name_19:
+target_19:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_19) -o $@  $< 
-name_20:
+target_20:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_20) -o $@  $< 
-name_21:
+target_21:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_21) -o $@  $< 
-name_22:
+target_22:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_22) -o $@  $< 
-name_23:
+target_23:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_23) -o $@  $< 
-name_24:
+target_24:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_24) -o $@  $< 
-name_25:
+target_25:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_25) -o $@  $< 
-name_26:
+target_26:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_26) -o $@  $< 
-name_27:
+target_27:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_27) -o $@  $< 
-name_28:
+target_28:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_28) -o $@  $< 
-name_29:
+target_29:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_29) -o $@  $< 
-name_30:
+target_30:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_30) -o $@  $< 
-name_31:
+target_31:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_31) -o $@  $< 
-name_32:
+target_32:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_32) -o $@  $< 
-name_33:
+target_33:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_33) -o $@  $< 
-name_34:
+target_34:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_34) -o $@  $< 
-name_35:
+target_35:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_35) -o $@  $< 
-name_36:
+target_36:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_36) -o $@  $< 
-name_37:
+target_37:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_37) -o $@  $< 
-name_38:
+target_38:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_38) -o $@  $< 
-name_39:
+target_39:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_39) -o $@  $< 
-name_40:
+target_40:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_40) -o $@  $< 
-name_41:
+target_41:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_41) -o $@  $< 
-name_42:
+target_42:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_42) -o $@  $< 
-name_43:
+target_43:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_43) -o $@  $< 
-name_44:
+target_44:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_44) -o $@  $< 
-name_45:
+target_45:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_45) -o $@  $< 
-name_46:
+target_46:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_46) -o $@  $< 
-name_47:
+target_47:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_47) -o $@  $< 
-name_48:
+target_48:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_48) -o $@  $< 
-name_49:
+target_49:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_49) -o $@  $< 
-name_50:
+target_50:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_50) -o $@  $< 
-name_51:
+target_51:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_51) -o $@  $< 
-name_52:
+target_52:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_52) -o $@  $< 
-name_53:
+target_53:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_53) -o $@  $< 
-name_54:
+target_54:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_54) -o $@  $< 
-name_55:
+target_55:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_55) -o $@  $< 
-name_56:
+target_56:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_56) -o $@  $< 
-name_57:
+target_57:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_57) -o $@  $< 
-name_58:
+target_58:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_58) -o $@  $< 
-name_59:
+target_59:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_59) -o $@  $< 
-name_60:
+target_60:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_60) -o $@  $< 
-name_61:
+target_61:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_61) -o $@  $< 
-name_62:
+target_62:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_62) -o $@  $< 
-name_63:
+target_63:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_63) -o $@  $< 
-name_64:
+target_64:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_64) -o $@  $< 
-name_65:
+target_65:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_65) -o $@  $< 
-name_66:
+target_66:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_66) -o $@  $< 
-name_67:
+target_67:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_67) -o $@  $< 
-name_68:
+target_68:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_68) -o $@  $< 
-name_69:
+target_69:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_69) -o $@  $< 
-name_70:
+target_70:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_70) -o $@  $< 
-name_71:
+target_71:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_71) -o $@  $< 
-name_72:
+target_72:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_72) -o $@  $< 
-name_73:
+target_73:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_73) -o $@  $< 
-name_74:
+target_74:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_74) -o $@  $< 
-name_75:
+target_75:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_75) -o $@  $< 
-name_76:
+target_76:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_76) -o $@  $< 
-name_77:
+target_77:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_77) -o $@  $< 
-name_78:
+target_78:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_78) -o $@  $< 
-name_79:
+target_79:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_79) -o $@  $< 
-name_80:
+target_80:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_80) -o $@  $< 
-name_81:
+target_81:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_81) -o $@  $< 
-name_82:
+target_82:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_82) -o $@  $< 
-name_83:
+target_83:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_83) -o $@  $< 
-name_84:
+target_84:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_84) -o $@  $< 
-name_85:
+target_85:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_85) -o $@  $< 
-name_86:
+target_86:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_86) -o $@  $< 
-name_87:
+target_87:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_87) -o $@  $< 
-name_88:
+target_88:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_88) -o $@  $< 
-name_89:
+target_89:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_89) -o $@  $< 
-name_90:
+target_90:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_90) -o $@  $< 
-name_91:
+target_91:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_91) -o $@  $< 
-name_92:
+target_92:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_92) -o $@  $< 
-name_93:
+target_93:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_93) -o $@  $< 
-name_94:
+target_94:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_94) -o $@  $< 
-name_95:
+target_95:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_95) -o $@  $< 
-name_96:
+target_96:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_96) -o $@  $< 
-name_97:
+target_97:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_97) -o $@  $< 
-name_98:
+target_98:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_98) -o $@  $< 
-name_99:
+target_99:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_99) -o $@  $< 
-name_100:
+target_100:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_100) -o $@  $< 
-name_101:
+target_101:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_101) -o $@  $< 
-name_102:
+target_102:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_102) -o $@  $< 
-name_103:
+target_103:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_103) -o $@  $< 
-name_104:
+target_104:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_104) -o $@  $< 
-name_105:
+target_105:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_105) -o $@  $< 
-name_106:
+target_106:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_106) -o $@  $< 
-name_107:
+target_107:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_107) -o $@  $< 
-name_108:
+target_108:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_108) -o $@  $< 
-name_109:
+target_109:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_109) -o $@  $< 
-name_110:
+target_110:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_110) -o $@  $< 
-name_111:
+target_111:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_111) -o $@  $< 
-name_112:
+target_112:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_112) -o $@  $< 
-name_113:
+target_113:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_113) -o $@  $< 
-name_114:
+target_114:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_114) -o $@  $< 
-name_115:
+target_115:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_115) -o $@  $< 
-name_116:
+target_116:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_116) -o $@  $< 
-name_117:
+target_117:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_117) -o $@  $< 
-name_118:
+target_118:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_118) -o $@  $< 
-name_119:
+target_119:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_119) -o $@  $< 
-name_120:
+target_120:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_120) -o $@  $< 
-name_121:
+target_121:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_121) -o $@  $< 
-name_122:
+target_122:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_122) -o $@  $< 
-name_123:
+target_123:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_123) -o $@  $< 
-name_124:
+target_124:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_124) -o $@  $< 
-name_125:
+target_125:
 	lulesh.h
 	$(CXX) -c $(CXXFLAGS_125) -o $@  $< 
 	
