@@ -24,12 +24,12 @@ Run completed:
    Iteration count     =  932 
    Final Origin Energy = 2.025075e+05 
    Testing Plane 0 of Energy Array on rank 0:
-        MaxAbsDiff   = 5.638867e-11
-        TotalAbsDiff = 8.218206e-10
-        MaxRelDiff   = 4.295864e-12
+        MaxAbsDiff   = 4.001777e-11
+        TotalAbsDiff = 6.748414e-10
+        MaxRelDiff   = 1.502434e-12
 
 
-Elapsed time         =      42.76 (s)
-Grind time (us/z/c)  =  1.6994374 (per dom)  ( 1.6994374 overall)
-FOM                  =  588.43004 (z/s)
+Elapsed time         =      43.81 (s)
+Grind time (us/z/c)  =  1.7408757 (per dom)  ( 1.7408757 overall)
+FOM                  =  574.42354 (z/s)
 
