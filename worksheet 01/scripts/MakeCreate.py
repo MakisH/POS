@@ -44,7 +44,7 @@ for k in range(0,len(flag_string)):
 
 lines.insert(flags_index, flag_lines)
 lines.insert(targets_index, target_lines)
-
+#TODO change batch.ll files as well to identify run.
 f_handle.close()
 
 new_f_handle = open("new_Makefile", "w")
