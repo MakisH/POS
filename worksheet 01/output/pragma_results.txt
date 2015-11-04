@@ -1,0 +1,15 @@
+
+G++ COMPILER, sequential:
+
+
+
+SERCXX = g++ -DUSE_MPI=0
+CXXFLAGS = -O3 -I. -w, 
+
+without any pragmas: 
+
+with #pragma GCC ivdep: 44.65 seconds
+
+Intel COMPILER, sequential:
+
+

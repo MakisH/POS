@@ -1,12 +1,12 @@
 #!/bin/bash
 #@ wall_clock_limit = 00:20:00
-#@ job_name = pos-lulesh-mpi
+#@ job_name = pos-lulesh-seq
 #@ job_type = MPICH
-#@ class = micro
-#@ output = pos_lulesh_mpi_$(jobid).out
-#@ error = pos_lulesh_mpi_$(jobid).out
+#@ class = test
+#@ output = pos_lulesh_seq_$(jobid).out
+#@ error = pos_lulesh_seq_$(jobid).out
 #@ node = 1
-#@ total_tasks = 16
+#@ total_tasks = 1
 #@ node_usage = not_shared
 #@ energy_policy_tag = lulesh
 #@ minimize_time_to_solution = yes
@@ -16,6 +16,9 @@
 . /etc/profile.d/modules.sh
 . $HOME/.bashrc
 # load the correct MPI library
-module unload mpi.ibm
-module load mpi.intel
-mpiexec -n 8 ./lulesh2.0
+# module unload mpi.ibm
+# module load mpi.intel
+
+./lulesh2.0
+
+
