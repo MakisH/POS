@@ -1,15 +1,16 @@
-
 G++ COMPILER, sequential:
 
-
-
+seq.ll script
 SERCXX = g++ -DUSE_MPI=0
 CXXFLAGS = -O3 -I. -w, 
 
-without any pragmas: 
-
+without any pragmas: 44.24 seconds
 with #pragma GCC ivdep: 44.65 seconds
+with #pragma GCC optimize noreturn hot:
 
 Intel COMPILER, sequential:
+
+
+
 
 
