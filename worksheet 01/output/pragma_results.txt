@@ -4,16 +4,59 @@ seq.ll script
 SERCXX = g++ -DUSE_MPI=0
 CXXFLAGS = -O3 -I. -w, 
 
-without any pragmas: 
-44.24 seconds
+BEST OPTION: #pragma GCC ivdep
+
 with #pragma GCC ivdep:
 34.26 seconds
+
 with #pragma GCC optimize noreturn hot: 
 35.47 seconds
+
+without any pragmas: 
+44.24 seconds
+
+####################################################
 
 Intel COMPILER, sequential:
 
 seq.ll script
+SERCXX = icpc -DUSE_MPI=0
+CXXFLAGS = -O3 -I. -w, 
+
+BEST OPTION: #pragma no fusion
+
+with #pragma no fusion:
+27.19 seconds
+
+with #pragma unroll_and_jam:
+27.36 seconds
+
+with #pragma unroll:
+27.37 seconds
+
+with #pragma nounroll:
+27.38 seconds
+
+with #pragma ivdep:
+27.82 seconds
+
+with #pragma simd:
+27.85 seconds
+
+with #pragma distribute_point:
+27.96 seconds
+
+without any pragmas:
+28.15 seconds
+
+with #pragma vector:
+31.5 seconds
+
+
+
+
+
+
 
 
 
