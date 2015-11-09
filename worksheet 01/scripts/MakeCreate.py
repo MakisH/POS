@@ -12,7 +12,6 @@ def find(l, s):
             return i
     return None # Or -1
 
-numbers = ["1","2","3","4","5"]
 intel = ["-march = native","-fomit-fram-pointer","-floop-block","-floop-interchange","-floop-strip-mine","-funroll-loops","-flto"]
 f_handle = open('Makefile','r+')
 #fileinput.filename()

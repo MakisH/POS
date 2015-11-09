@@ -1,0 +1,26 @@
+NATHAN:
+
+1. create Makefile that accepts environment variable for flags
+2. write Python script (modify MakeCreate.py) that, for all flag combinations:
+
+A. grabs combination of flags
+B. sets ${FLAGS}
+C. runs make with this combination of flags
+D. then, executes the seq.ll job script for this combination
+
+
+MAKIS:
+
+Run LLU: load leveler user - shows me my queue
+combine with grep
+See if job is completed, process output file. 
+Take the performance metric from output file into a variable. 
+You have times of smaller combinations, then you want times of bigger combinations.
+
+
+
+
+
+
+
+
