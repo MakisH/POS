@@ -14,23 +14,23 @@ def find(l, s):
             return i
     return None # Or -1
 
-intel = ["-march = native","-fomit-fram-pointer","-floop-block","-floop-interchange","-floop-strip-mine","-funroll-loops","-flto"]
+test_all = 1
+intel = ["-march=native", "-xHost", "-unroll", "-ipo"]
+gcc = ["-march=native","-fomit-frame-pointer","-floop-block","-floop-interchange","-floop-strip-mine","-funroll-loops","-flto"]
 f_handle = open('Makefile','r+')
+script = "seq.ll"
+
 #fileinput.filename()
 
-flag_string = []
-
-for i in range(0, len(intel)-1): 
-	combination = list(itertools.combinations(intel,i)) 
-	flag_string.extend(map(' '.join,combination))
-
-for j in range(0, len(flag_string)-1):
-	os.environ['FLAG_COMBINATION'] = flag_string[j]
-	subprocess.call(["make"])
-	subprocess.call(["./exec"])
-
-flag_searchline = '#flag_list'
-target_searchline = '#target_list'
-
+if (test_all == 1)
+	flag_string = []
+	for i in range(0, len(intel)-1): 
+		combination = list(itertools.combinations(intel,i)) 
+		flag_string.extend(map(' '.join,combination))
+	for j in range(0, len(flag_string)-1):
+		os.environ['FLAG_COMBINATION'] = flag_string[j]
+		subprocess.call(["bash" + script])
+else
+	
 
 
