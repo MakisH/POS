@@ -1035,6 +1035,8 @@ void CalcHourglassControlForElems(Domain& domain,
 
    /* start loop over elements */
 #pragma omp parallel for firstprivate(numElem)
+
+   
    for (Index_t i=0 ; i<numElem ; ++i){
       Real_t  x1[8],  y1[8],  z1[8] ;
       Real_t pfx[8], pfy[8], pfz[8] ;
@@ -1048,7 +1050,6 @@ void CalcHourglassControlForElems(Domain& domain,
 
       // #pragma GCC ivdep // for GCC compiler (g++)
       #pragma no fusion // for Intel compiler (icpc)
-      
       for(Index_t ii=0;ii<8;++ii){
          Index_t jj=8*i+ii;
 
