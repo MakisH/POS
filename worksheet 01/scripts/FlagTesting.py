@@ -10,19 +10,28 @@ import subprocess
 test_all = 1
 intel = ["-march=native", "-xHost", "-unroll", "-ipo"]
 gcc = ["-march=native","-fomit-frame-pointer","-floop-block","-floop-interchange","-floop-strip-mine","-funroll-loops","-flto"]
-f_handle = open('Makefile','r+')
-script = "seq.ll"
 
+original_bash_script_handle = open('seq.ll','r+')
 
-#fileinput.filename()
+output_searchline = 'pos_lulesh_seq_$(jobid).out'
+error_searchline = 'pos_lulesh_seq_$(jobid).out'
 
-#if (test_all == 1)
-	flag_string = []
-	for i in range(0, len(intel)-1): 
-		combination = list(itertools.combinations(intel,i)) 
-		flag_string.extend(map(' '.join,combination))
-	for j in range(0, len(flag_string)-1):
-		os.environ['FLAG_COMBINATION'] = "-O3 -I. -w" + flag_string[j]
-		subprocess.call(["bash" + script])
-#else
+script_name = flagtest.ll
 
+flag_string = []
+
+for i in range(0, len(intel)-1): 
+	combination = list(itertools.combinations(intel,i)) 
+	flag_string.extend(map(' '.join,combination))
+
+for j in range(0, len(flag_string)-1):
+
+	os.environ['FLAG_COMBINATION'] = "-O3 -I. -w" + flag_string[j]
+	current_flag_string = flag_string[j]
+	jobid = current_flag_string.replace(" ", "")
+	jobid = jobid.replace(".", "")
+	jobid = jobid.replace("-", "_")
+	script_name = "seq" + jobid + ".ll"
+	os.environ['OUTPUT_FILE_NAME'] = "pos_lulesh_seq_$" + jobid + ".out"
+	os.environ['ERROR_FILE_NAME'] = "pos_lulesh_seq_$" + jobid + "error.out"
+	subprocess.call(["bash" + script_name])
