@@ -16,7 +16,7 @@ original_bash_script_handle = open('seq.ll','r+')
 output_searchline = 'pos_lulesh_seq_$(jobid).out'
 error_searchline = 'pos_lulesh_seq_$(jobid).out'
 
-script_name = flagtest.ll
+script_name = "flagtest.ll"
 
 flag_string = []
 
@@ -31,7 +31,6 @@ for j in range(0, len(flag_string)-1):
 	jobid = current_flag_string.replace(" ", "")
 	jobid = jobid.replace(".", "")
 	jobid = jobid.replace("-", "_")
-	script_name = "seq" + jobid + ".ll"
 	os.environ['OUTPUT_FILE_NAME'] = "pos_lulesh_seq_$" + jobid + ".out"
 	os.environ['ERROR_FILE_NAME'] = "pos_lulesh_seq_$" + jobid + "error.out"
-	subprocess.call(["bash" + script_name])
+	subprocess.call(["llsubmit " + script_name])
