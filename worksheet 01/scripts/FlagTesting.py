@@ -13,6 +13,7 @@ gcc = ["-march=native","-fomit-frame-pointer","-floop-block","-floop-interchange
 f_handle = open('Makefile','r+')
 script = "seq.ll"
 
+
 #fileinput.filename()
 
 #if (test_all == 1)
@@ -21,7 +22,7 @@ script = "seq.ll"
 		combination = list(itertools.combinations(intel,i)) 
 		flag_string.extend(map(' '.join,combination))
 	for j in range(0, len(flag_string)-1):
-		os.environ['FLAG_COMBINATION'] = flag_string[j]
+		os.environ['FLAG_COMBINATION'] = "-O3 -I. -w" + flag_string[j]
 		subprocess.call(["bash" + script])
 #else
 
