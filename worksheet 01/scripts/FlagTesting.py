@@ -33,4 +33,4 @@ for j in range(0, len(flag_string)-1):
 	jobid = jobid.replace("-", "_")
 	os.environ['OUTPUT_FILE_NAME'] = "pos_lulesh_seq_$" + jobid + ".out"
 	os.environ['ERROR_FILE_NAME'] = "pos_lulesh_seq_$" + jobid + "error.out"
-	subprocess.call(["llsubmit " + script_name])
+	subprocess.call(["llsubmit " + script_name], shell=True)
