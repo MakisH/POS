@@ -13,7 +13,6 @@ gcc = ["-march=native","-fomit-frame-pointer","-floop-block","-floop-interchange
 script_name = "flagtest.ll"
 
 #create new temp file with environment variables replaced with flags
-LLinput = open(script_name,'r+')
 output_searchline = 'pos_lulesh_seq_$(jobid).out'
 error_searchline = 'pos_lulesh_seq_$(jobid).out'
 
@@ -25,9 +24,10 @@ for i in range(0, len(intel) + 1):
 	flag_string.extend(map(' '.join, combination))
 
 
-for j in range(len(flag_string) -2, len(flag_string) -1):
+for j in range(0, len(flag_string) -1):
 #for j in range(0, 1):
 	LLoutput = open('tmp.ll',"w")
+        LLinput = open(script_name,'r+')
 	os.environ['FLAG_COMBINATION'] = str("-O3 -I. -w " + flag_string[j])
 	print("make fresh!!!!!!!\n")
 	subprocess.call("make fresh", shell = True)
@@ -47,6 +47,7 @@ for j in range(len(flag_string) -2, len(flag_string) -1):
 	# error_file_name_line = "pos_lulesh_seq_$" + jobid + "error.out"
 	
 	LLoutput.close()	
+	LLinput.close()
 	#submit job to load leveler with temporary .ll file
 	subprocess.call(["llsubmit tmp.ll"], shell=True)
 #	subprocess.call(["rm tmp.ll"], shell = True)
