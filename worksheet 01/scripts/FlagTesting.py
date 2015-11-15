@@ -1,4 +1,7 @@
 #!/usr/bin/python
+#!/usr/bin/python -tt
+
+# python -m tabnanny FlagTesting.py checks for indentation problems
 
 import itertools
 import os
@@ -19,7 +22,7 @@ for i in range(0, len(intel) + 1):
 
 for j in range(0, len(flag_string) -1):
 	LLoutput = open('tmp.ll',"w")
-    LLinput = open(script_name,'r+')
+	LLinput = open(script_name,'r+')
 	os.environ['FLAG_COMBINATION'] = str("-O3 -I. -w " + flag_string[j])
 	print("make fresh!!!!!!!\n")
 	subprocess.call("make fresh", shell = True)
@@ -31,15 +34,14 @@ for j in range(0, len(flag_string) -1):
 	os.environ['ERROR_FILE_NAME'] = "pos_lulesh_seq_" + flags + "_$(jobid).error.out"
 	row_in = LLinput.readlines()
 	print("writing tmp.ll..... \n")
-    for line in row_in:
-        LLoutput.write(os.path.expandvars(line))
+	for line in row_in:
+		LLoutput.write(os.path.expandvars(line))
 	
 	LLoutput.close()	
 	LLinput.close()
 
 	#submit job to load leveler with temporary .ll file
 	subprocess.call(["llsubmit tmp.ll"], shell=True)
-
 	time.sleep(2)
 
 	#subprocess.call(["rm tmp.ll"], shell = True)
