@@ -60,4 +60,8 @@ clean:
 	/bin/rm -rf *.dSYM
 
 tar: clean
-	cd .. ; tar cvf lulesh-2.0.tar LULESH-2.0 ; mv lulesh-2.0.tar LULESH-2.0
+	cd .. ; tar cvf lulesh-2.0.tar LULESH-2.0 ; mv lulesh-2.0.tar LULESH-2.
+
+fresh: clean all
+
+
