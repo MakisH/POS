@@ -24,11 +24,11 @@ for j in range(0, len(flag_string) -1):
 	print("make fresh!!!!!!!\n")
 	subprocess.call("make fresh", shell = True)
 	current_flag_string = flag_string[j]
-	jobid = current_flag_string.replace(" ", "")
-	jobid = jobid.replace(".", "")
-	jobid = jobid.replace("-", "_")
-	os.environ['OUTPUT_FILE_NAME'] = "pos_lulesh_seq_" + jobid + ".out"
-	os.environ['ERROR_FILE_NAME'] = "pos_lulesh_seq_" + jobid + "_error.out"
+	flags = current_flag_string.replace(" ", "")
+	flags = flags.replace(".", "")
+	flags = flags.replace("-", "_")
+	os.environ['OUTPUT_FILE_NAME'] = "pos_lulesh_seq_" + flags + "_$(jobid).out"
+	os.environ['ERROR_FILE_NAME'] = "pos_lulesh_seq_" + flags + "_$(jobid).error.out"
 	row_in = LLinput.readlines()
 	print("writing tmp.ll..... \n")
     for line in row_in:
@@ -39,4 +39,12 @@ for j in range(0, len(flag_string) -1):
 
 	#submit job to load leveler with temporary .ll file
 	subprocess.call(["llsubmit tmp.ll"], shell=True)
+
+	time.sleep(2)
+
 	#subprocess.call(["rm tmp.ll"], shell = True)
+
+
+
+
+
