@@ -5,17 +5,30 @@
 The function CalcHourglassControlForElems() takes 72% of the execution time, and the function CalcKinematicsForElems() takes 22% of the time.  Combined, they take up 94% of the execution time. 
 
 4.2.2: Chip
-
-
 4.3.2: Makis
-
-
 5.1.2: Chip
 
 
 5.2.2: Nathan
 
+"
+To configure the benchmark with MPI enabled, please refer to section 3.2.2. Build the benchmark and launch it with the provided Load-Leveler script.
+Take a look at the benchmark’s documentation and evaluate scalability with valid process counts. The number of processes must not exceed the total of cores in the node used. Record the performance with each process count and generate a plot. Use GNU Plot or generate and export a plot from a spreadsheet."
 
+"Submit the scalability plot in PDF format. Name the file: ’MPI_scalability.pdf’."
+
+"
+Comment about the scalability observed:
+• What are the valid combinations of processes allowed?
+• Was linear scalability achieved?
+• On which process-count was the maximum performance achieved?
+• How does the performance compare to the results achieved with OpenMP in section 5.1? "
+
+LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts, and SuperMUC thin nodes have 16 cores total.
+
+With 27 processors: srv03-ib.1093341 : seg fault
+With 8 processors: srv04-ib.1068770 : seg fault
+With 1 processor: srv03-ib.1093342 : seg fault
 
 
 5.3.2: Makis
