@@ -25,7 +25,7 @@ SOURCES2.0 = \
 OBJECTS2.0 = $(SOURCES2.0:.cc=.o)
 
 # Our config for serial run
-CXXFLAGS = $(FLAG_COMBINATION)
+CXXFLAGS = ${FLAG_COMBINATION}
 #CXXFLAGS = -O3 -I. -w 
 
 #flag_list
