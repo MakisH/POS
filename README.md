@@ -1,9 +1,12 @@
-# Topics to Discuss
+# About
+This our work for the Programming of Supercomputers course at TUM, WS2015-16.
 
-# TODO's
+Consume responsibly!
 
-TODO: Chip to finish gcc compiler flag optimization
-TODO: Nathan to try various pragmas on the outer loop
-TODO: Chip to do section 5.1 (OpenMP)
-TODO: Nathan to do section 5.2 (MPI)
-TODO: Makis to do section 5.3 (Hybrid)
+Worksheet 1: Single Node Performance.
+
+Worksheet 2: Parallel Debugging.
+
+Worksheet 3: tba.
+
+Worksheet 4: tba.
