@@ -1,4 +1,4 @@
-#default build suggestion of MPI + OPENMP with gcc on Livermore machines you might have to change the compiler name
+# Makefile for the LULESH benchmark, in the context of TUM Programming of Supercomputers course, WS2015-16, Worksheet 1, group 9.
 
 SHELL = /bin/sh
 .SUFFIXES: .cc .o
@@ -9,12 +9,19 @@ LULESH_EXEC = lulesh2.0
 MPI_INC = /lrz/sys/intel/impi/5.0.3.048/include64
 MPI_LIB = /lrz/sys/intel/impi/5.0.3.048/lib64
 
-SERCXX = g++ -DUSE_MPI=0
+# Compiler to use for the serial and the MPI case.
+# For GCC serial, use g++ (load the module gcc/4.9).
+# For Intel serial, use icc (load the module intel/15.0).
+# For intel MPI, use mpiCC (unload the module mpi.ibm, load the module mpi.intel).
+#SERCXX = g++ -DUSE_MPI=0
+SERCXX = icc -DUSE_MPI=0
 MPICXX = mpiCC -DUSE_MPI=1
-# Serial run
+
+# Serial or MPI run? Uncomment respectively
+## Serial run
 CXX = $(SERCXX)
-# MPI run
-# CXX = $(MPICXX)
+## MPI run
+#CXX = $(MPICXX)
 
 SOURCES2.0 = \
 	lulesh.cc \
@@ -24,32 +31,24 @@ SOURCES2.0 = \
 	lulesh-init.cc
 OBJECTS2.0 = $(SOURCES2.0:.cc=.o)
 
-# Our config for serial run
-CXXFLAGS = ${FLAG_COMBINATION}
-#CXXFLAGS = -O3 -I. -w 
+# Compiler flags
+#  To enable profiling, add "-pg".
+#  To see the vectorization reports for g++, add "-ftree-vectorizer-verbose=2 -fopt-info-vec-missed=missed.all".
+#  To see the vectorization reports for icc, add "-vec-report2".
+#  To enable OpenMP use "-fopenmp" for g++, or "-openmp" for icc.
+#  Selected flags for g++ in Task 4.2: "-O3 -march="native" -funroll-loops -floop-block".
+#  Selected flags for icc in Task 4.2: "-O3 -xHost -unroll".
+OPTIM_FLAGS = -O3 -xHost -unroll
+CXXFLAGS = $(OPTIM_FLAGS) -I. -w
 
-#flag_list
+# Linker flags
 LDFLAGS = -O3
-
-# Our config for OpenMP
-# CXXFLAGS = -O3 -openmp -I.
-# LDFLAGS = -O3 -openmp
-
-# Our config for MPI
-# CXXFLAGS = -O3 -I. -w
-# LDFLAGS = -O3
-
-# Our config for MPI + OpenMP
-# CXXFLAGS = -O3 -openmp -I.
-# LDFLAGS = -O3 -openmp
 
 .cc.o: lulesh.h
 	@echo "Building $<"
 	$(CXX) -c $(CXXFLAGS) -o $@  $<
 
 all: $(LULESH_EXEC)
-	
-#target_list
 
 lulesh2.0: $(OBJECTS2.0)
 	@echo "Linking"
@@ -60,8 +59,7 @@ clean:
 	/bin/rm -rf *.dSYM
 
 tar: clean
-	cd .. ; tar cvf lulesh-2.0.tar LULESH-2.0 ; mv lulesh-2.0.tar LULESH-2.
+	cd .. ; tar cvf lulesh-2.0.tar LULESH-2.0 ; mv lulesh-2.0.tar LULESH-2.0
 
+# Shortcut to "make clean && make".
 fresh: clean all
-
-
