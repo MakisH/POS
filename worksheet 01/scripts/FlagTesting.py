@@ -23,7 +23,7 @@ for i in range(0, len(intel) + 1):
 for j in range(0, len(flag_string) -1):
 	LLoutput = open('tmp.ll',"w")
 	LLinput = open(script_name,'r+')
-	os.environ['FLAG_COMBINATION'] = str("-O3 -I. -w " + flag_string[j])
+	os.environ['OPTIM_FLAGS'] = str(flag_string[j])
 	print("make fresh!!!!!!!\n")
 	subprocess.call("make fresh", shell = True)
 	current_flag_string = flag_string[j]
