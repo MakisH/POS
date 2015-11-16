@@ -25,7 +25,7 @@ SOURCES2.0 = \
 OBJECTS2.0 = $(SOURCES2.0:.cc=.o)
 
 # Our config for serial run
-CXXFLAGS = FLAG_COMBINATION
+CXXFLAGS = ${FLAG_COMBINATION}
 #CXXFLAGS = -O3 -I. -w 
 
 #flag_list
@@ -60,4 +60,8 @@ clean:
 	/bin/rm -rf *.dSYM
 
 tar: clean
-	cd .. ; tar cvf lulesh-2.0.tar LULESH-2.0 ; mv lulesh-2.0.tar LULESH-2.0
+	cd .. ; tar cvf lulesh-2.0.tar LULESH-2.0 ; mv lulesh-2.0.tar LULESH-2.
+
+fresh: clean all
+
+
