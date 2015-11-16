@@ -1,33 +1,19 @@
-4.1.2: Makis
+4.1.2: Nathan
+
+"In the video, make sure to mention which functions represented most of the execution time of the benchmark. Enumerate the functions that make together 80% or more of the execution time."
+
+The function CalcHourglassControlForElems() takes 72% of the execution time, and the function CalcKinematicsForElems() takes 22% of the time.  Combined, they take up 94% of the execution time. 
+
+4.2.2: Chip
 
 
-
-
-4.2.2: Nathan
-
-
-
-
-
-4.3.2: Chip
-
-
-
-
+4.3.2: Makis
 
 
 5.1.2: Chip
 
 
-
-
-
-
 5.2.2: Nathan
-
-
-
-
 
 
 
