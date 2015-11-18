@@ -1,8 +1,8 @@
-4.1.2: Nathan
+4.1.2
 
 The function CalcHourglassControlForElems() takes 72% of the execution time, and the function CalcKinematicsForElems() takes 22% of the time.  Combined, they take up 94% of the execution time. Almost all of the time is spent in the functions themselves not in child functions of the functions. 
 
-4.2.2: Chip
+4.2.2
 
 1. For icc, we have 17+24+8+49+19 = 117 optimization flags in 5 categories (Optimization, Code generation, Interprocedural Optimization (IPO), Advanced Optimizations, and Profile Guided Optimization (PGO)). For gcc, there are approximately 230 optimization flags. 
 
@@ -13,13 +13,21 @@ like Periscope. We actually tried running all the gcc flag combinations with a s
 3. In our case, these flags were -O3 -march="native" -funroll-loops and -floop-block"
 for gcc, and -03 -xHost -unroll for icc. 
 
-5.1.2: OpenMP
+4.3.2
+
+#pragma simd: Enforces vectorisazation of loops 
+
+#pragma ivdep: overrides potential dependencies, but the compiler still performs a dependency analysis, and will not vectorize if it finds a proven dependency that would affect results. More
+
+#pragma vector: The vector pragma indicates that the loop should be vectorized, if it is legal to do so, ignoring normal heuristic decisions about profitability. The vector pragma takes several argument keywords to specify the kind of loop vectorization required. These keywords are aligned, unaligned, always, temporal, and nontemporal. The compiler does not apply the vector pragma to nested loops, each nested loop needs a preceding pragma statement. Place the pragma before the loop control statement. More
+
+5.1.2
 
 Near-linear scalability was achieved in up to 8 threads. Thre was relatively little performance increase from 8 to 16 threads
 because at 16 threads, the threads are spread over two sockets.
 The maximum performance was achieved at 16 threads. 
 
-5.2.2: MPI
+5.2.2
 
 LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts. 
 We want to keep one process per core. To use over 16 processes, one must use multiple nodes, in order to keep one process per core.
@@ -27,7 +35,7 @@ We didn't have linear scalability, we had data that asymptotically approaches a 
 The maximum process count was achieved at 64. 
 It performance and scalability looks similar to the OpenMP results. 
 
-5.3.2: MPI / OpenMP
+5.3.2
 
 The valid combinations are one process with one, two, four, eight, or sixteen threads, or eight processes
 with one or two threads. This is because Lulesh only allows integer cubes for process numbers, and on one node, to avoid having more than process per core, the product of processes and threads must be less than or equal to 16. 
