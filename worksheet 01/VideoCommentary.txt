@@ -15,11 +15,9 @@ for gcc, and -03 -xHost -unroll for icc.
 
 4.3.2
 
-#pragma simd: Enforces vectorisazation of loops 
+The ivdep pragma tells the compiler that it can avoid any assumed dependences, but it will still apply performance heuristics to decide if to vectorize or not. The vector  prgrama (for example vector always) will ask the compiler to always vectorize the loop despite the heuristics, if it is legal. The simd pragma will tell the compiler to avoid both assumed dependencies and heuristics.
 
-#pragma ivdep: overrides potential dependencies, but the compiler still performs a dependency analysis, and will not vectorize if it finds a proven dependency that would affect results. More
-
-#pragma vector: The vector pragma indicates that the loop should be vectorized, if it is legal to do so, ignoring normal heuristic decisions about profitability. The vector pragma takes several argument keywords to specify the kind of loop vectorization required. These keywords are aligned, unaligned, always, temporal, and nontemporal. The compiler does not apply the vector pragma to nested loops, each nested loop needs a preceding pragma statement. Place the pragma before the loop control statement. More
+In the function CalcHourglassControlForElems, there is an outer OpenMP loop and an inner loop with length 8. The loop can be vectorized, but the overhead to use the SIMD registers is too large for such a small loop, as our tests showed. We tried to use vectorization with and without OpenMP and we found out that in the general (with OpenMP) case, the vectorization was decreasing the performance. So, we decided to use ivdep for the Intel compiler, to let the compiler decide in every case. Moreover, we didn't observe any better results with other loop transformations or inlining. In the case of gcc, none of the pragmas we tried gave better results.
 
 5.1.2
 
@@ -31,9 +29,10 @@ The maximum performance was achieved at 16 threads.
 
 LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts. 
 We want to keep one process per core. To use over 16 processes, one must use multiple nodes, in order to keep one process per core.
-We didn't have linear scalability, we had data that asymptotically approaches a maximum FOM at 64 processes and then starts to decrease slightly. The initial non-linear scalability can be attributed to hyperthreading.
+We didn't have linear scalability, we had data that asymptotically approaches a maximum FOM at 64 processes and then starts to decrease slightly. Above 8 processes we have multiple processes per core, but we still have some improvement as process number increases because of hyperthreading. 
+
 The maximum process count was achieved at 64. 
-It performance and scalability looks similar to the OpenMP results. 
+The performance and scalability of the MPI results look similar to the OpenMP results. 
 
 5.3.2
 
