@@ -1,32 +1,56 @@
 4.1.2: Nathan
 
-"In the video, make sure to mention which functions represented most of the execution time of the benchmark. Enumerate the functions that make together 80% or more of the execution time."
-
-The function CalcHourglassControlForElems() takes 72% of the execution time, and the function CalcKinematicsForElems() takes 22% of the time.  Combined, they take up 94% of the execution time. 
+The function CalcHourglassControlForElems() takes 72% of the execution time, and the function CalcKinematicsForElems() takes 22% of the time.  Combined, they take up 94% of the execution time. Almost all of the time is spent in the functions themselves not in child functions of the functions. 
 
 4.2.2: Chip
-1. where to find
 
-2. it is not practical to test all the flags.  In this case, a step by step 
-perfomance optimization is most practical.  First run w/o any compiler flags.
-Then, impliment general optimization step by step with the flag -01 -02 -03.
-Intel then recomends initializing processor specific optimizations, namely
-"-xHost". Then apply code specific geusses one by one to test for performace 
-optimizations, and impliment only those where a higher performace is achieved.
+1. For icc, we have 17+24+8+49+19 = 117 optimization flags in 5 categories (Optimization, Code generation, Interprocedural Optimization (IPO), Advanced Optimizations, and Profile Guided Optimization (PGO)). For gcc, there are approximately 230 optimization flags. 
 
-2. In our cases these flags were -O3 -march="native" -funroll-loops -floop-block"
-for gcc and -03 -xHost -unroll for icc
-4.3.2: Makis
-5.1.2: Chip
+2. No, it is not practical to test all the flags manually. Instead, we could follow
+basic guidelines from the vendors, or use tools that implement search algorithms,
+like Periscope. We actually tried running all the gcc flag combinations with a script, and it took almost a day. 
 
-In this case linear scalability was not achieved but rather relative speedup 
-decread as the number of threads increased
+3. In our case, these flags were -O3 -march="native" -funroll-loops and -floop-block"
+for gcc, and -03 -xHost -unroll for icc. 
 
-5.2.2: Nathan
+5.1.2: OpenMP
 
-LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts, and SuperMUC thin nodes have 16 cores total.
+Near-linear scalability was achieved in up to 8 threads. Thre was relatively little performance increase from 8 to 16 threads
+because at 16 threads, the threads are spread over two sockets.
+The maximum performance was achieved at 16 threads. 
+
+5.2.2: MPI
+
+LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts. 
+We want to keep one process per core. To use over 16 processes, one must use multiple nodes, in order to keep one process per core.
+We didn't have linear scalability, we had data that asymptotically approaches a maximum FOM at 64 processes and then starts to decrease slightly. The initial non-linear scalability can be attributed to hyperthreading.
+The maximum process count was achieved at 64. 
+It performance and scalability looks similar to the OpenMP results. 
+
+5.3.2: MPI / OpenMP
+
+The valid combinations are one process with one, two, four, eight, or sixteen threads, or eight processes
+with one or two threads. This is because Lulesh only allows integer cubes for process numbers, and on one node, to avoid having more than process per core, the product of processes and threads must be less than or equal to 16. 
+
+We have non-linear scalability in the truly hybrid MPI / OpenMP case, because we showed in previous answers that MPI and OpenMP do not have linear scalability, and combining both of them does not change this non-linear scalability.  
+
+If we run the hybrid process with one thread and one process, it is slower than the OpenMP or the MPI case because there is more overhead. However, for greater numbers of processes, the hybrid helps because it combines the advantages of both MPI and OpenMP. 
+
+The hybrid solution is overall the fastest. 
+
+We would not have guesseed this combination because we have two combinations that use all the cores on one node. One is with one process and sixteen threads. The other is with eight processes and two threads. We wouldn't know the relative effect of OpenMP or MPI overheads before doing the experiments. 
 
 
 
 
-5.3.2: Makis
+
+
+
+
+
+
+
+
+
+
+
