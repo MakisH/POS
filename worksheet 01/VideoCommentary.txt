@@ -26,9 +26,41 @@ Comment about the scalability observed:
 
 LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts, and SuperMUC thin nodes have 16 cores total.
 
-With 27 processors: srv03-ib.1093341 : seg fault
-With 8 processors: srv04-ib.1068770 : seg fault
-With 1 processor: srv03-ib.1093342 : seg fault
+27 tasks, 27 processes, node = 1: srv04-ib.1068896:
+
+Elapsed time         =     290.62 (s)
+Grind time (us/z/c)  =  3.4224587 (per dom)  (0.12675773 overall)
+FOM                  =  7889.0653 (z/s)
+
+8 tasks, 8 processes: srv03-ib.1093468:
+
+Elapsed time         =     101.06 (s)
+Grind time (us/z/c)  =  1.8428662 (per dom)  (0.23035827 overall)
+FOM                  =   4341.064 (z/s)
+
+1 task, 1 process: srv04-ib.1068897:
+
+Elapsed time         =      43.35 (s)
+Grind time (us/z/c)  =   1.722695 (per dom)  (  1.722695 overall)
+FOM                  =  580.48581 (z/s)
+
+27 tasks, 27 processes, node = 3: srv04-ib.1068898:
+
+Elapsed time         =     158.70 (s)
+Grind time (us/z/c)  =  1.8689763 (per dom)  (0.069221343 overall)
+FOM                  =  14446.411 (z/s)
+
+16 tasks, 8 processes: srv04-ib.1068902:
+
+Elapsed time         =     100.91 (s)
+Grind time (us/z/c)  =  1.8402649 (per dom)  (0.23003311 overall)
+FOM                  =  4347.2003 (z/s)
+
+16 tasks, 1 process: srv03-ib.1093472:
+
+Elapsed time         =      43.11 (s)
+Grind time (us/z/c)  =  1.7130081 (per dom)  ( 1.7130081 overall)
+FOM                  =  583.76841 (z/s)
 
 
 5.3.2: Makis
