@@ -1,12 +1,12 @@
 NATHAN:
 
-1. create Makefile that accepts environment variable for flags
-2. write Python script (modify MakeCreate.py) that, for all flag combinations:
+DONE 1. create Makefile that accepts environment variable for flags
+DONE 2. write Python script (modify MakeCreate.py) that, for all flag combinations:
 
-A. grabs combination of flags
-B. sets ${FLAGS}
-C. runs make with this combination of flags
-D. then, executes the seq.ll job script for this combination
+DONE A. grabs combination of flags
+DONE B. sets ${FLAGS}
+DONE C. runs make with this combination of flags
+DONE D. then, executes the seq.ll job script for this combination
 
 
 MAKIS:
