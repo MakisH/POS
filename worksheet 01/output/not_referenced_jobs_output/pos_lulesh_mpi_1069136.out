@@ -1,0 +1,40 @@
+
+DISK GROUP QUOTAS for home and project file systems:
+Filesystem                                 Quota     Used Space     Free Space
+/home/hpc/h039v           ($HOME)        102.4GB   87.0GB (85%)   15.4GB (15%)
+/gpfs/work/h039v          ($WORK)        1000.0GB   20.5MB ( 0%)  1000.0GB (100%)
+-------------------------------------------------------------------------------
+
+Executing LRZ User Prolog ...
+/home/hpc/h039v/h039vaq/.bashrc: line 7: module: command not found
+/home/hpc/h039v/h039vaq/.bashrc: line 8: module: command not found
+/home/hpc/h039v/h039vaq/.bashrc: line 9: module: command not found
+/home/hpc/h039v/h039vaq/.bashrc: line 10: module: command not found
+/home/hpc/h039v/h039vaq/.bashrc: line 11: module: command not found
+Running problem size 30^3 per domain until completion
+Num processors: 125
+Total number of elements: 3375000
+
+To run other sizes, use -s <integer>.
+To run a fixed number of iterations, use -i <integer>.
+To run a more or less balanced region set, use -b <integer>.
+To change the relative costs of regions, use -c <integer>.
+To print out progress, use -p
+To write an output file for VisIt, use -v
+See help (-h) for more options
+
+Run completed:  
+   Problem size        =  30 
+   MPI tasks           =  125 
+   Iteration count     =  5382 
+   Final Origin Energy = 3.719551e+06 
+   Testing Plane 0 of Energy Array on rank 0:
+        MaxAbsDiff   = 1.658918e-09
+        TotalAbsDiff = 3.440618e-08
+        MaxRelDiff   = 5.530080e-14
+
+
+Elapsed time         =     233.40 (s)
+Grind time (us/z/c)  =  1.6061491 (per dom)  (0.012849193 overall)
+FOM                  =    77825.9 (z/s)
+
