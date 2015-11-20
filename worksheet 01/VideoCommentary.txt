@@ -1,63 +1,53 @@
 4.1.2
 
-The function CalcHourglassControlForElems() takes 72% of the execution time, and the function CalcKinematicsForElems() takes 22% of the time.  Combined, they take up 94% of the execution time. Almost all of the time is spent in the functions themselves not in child functions of the functions. 
+The function CalcHourglassControlForElems() takes 72% of the execution time, and the function CalcKinematicsForElems() takes 22% of the time.  Combined, they take up 94% of the execution time. Almost all of the time is spent in the functions themselves not in child functions of the functions.
+
+In the case of the Intel compiler, the distribution is different. In this case, the function EvalEOSForElems() takes 30% of the time. This and the next four functions that you can see in the flat profile, consume together the 84% of the total time.
 
 4.2.2
 
-1. For icc, we have 17+24+8+49+19 = 117 optimization flags in 5 categories (Optimization, Code generation, Interprocedural Optimization (IPO), Advanced Optimizations, and Profile Guided Optimization (PGO)). For gcc, there are approximately 230 optimization flags. 
+1. For icc, we have around 117 optimization flags in 5 categories (Optimization, Code generation, Interprocedural Optimization , Advanced Optimizations and Profile Guided Optimization). For gcc, there are approximately 230 optimization flags.
 
 2. No, it is not practical to test all the flags manually. Instead, we could follow
 basic guidelines from the vendors, or use tools that implement search algorithms,
-like Periscope. We actually tried running all the gcc flag combinations with a script, and it took almost a day. 
+like Periscope. We actually tried running all the gcc flag combinations with a script, and it took almost a day.
 
 3. In our case, these flags were -O3 -march="native" -funroll-loops and -floop-block"
-for gcc, and -03 -xHost -unroll for icc. 
+for gcc, and -03 -xHost -unroll for icc.
 
 4.3.2
 
-The ivdep pragma tells the compiler that it can avoid any assumed dependences, but it will still apply performance heuristics to decide if to vectorize or not. The vector  prgrama (for example vector always) will ask the compiler to always vectorize the loop despite the heuristics, if it is legal. The simd pragma will tell the compiler to avoid both assumed dependencies and heuristics.
+The ivdep pragma tells the compiler that it can avoid any assumed dependences, but it will still apply performance heuristics to decide if to vectorize or not. The simd pragma, on the other hand, enforces vectorization. The compiler trusts the user about both the dependencies and the performance.
+The vector pragma asks the compiler to vectorize the loop according to its arguments. For example, the vector always pragma instructs the compiler to always try to vectorize, if this is legal. In this case, it has the same behavior as ivdep.
 
-In the function CalcHourglassControlForElems, there is an outer OpenMP loop and an inner loop with length 8. The loop can be vectorized, but the overhead to use the SIMD registers is too large for such a small loop, as our tests showed. We tried to use vectorization with and without OpenMP and we found out that in the general (with OpenMP) case, the vectorization was decreasing the performance. So, we decided to use ivdep for the Intel compiler, to let the compiler decide in every case. Moreover, we didn't observe any better results with other loop transformations or inlining. In the case of gcc, none of the pragmas we tried gave better results.
+For each compiler, there was a different dominating function. While the CalcHourglassControlForElems was clearly the first for the gcc, it was the second for the Intel. Still, the difference from the first was small, while it posed some potential for performance improvement. Added to this, the intel's first function was already treated with OpenMP in every loop, so we decided to study the same function for both compilers.
+
+In this, there is an outer OpenMP loop and an inner loop with trip length 8. The loop can be vectorized, but when we forced the vectorization we didn't
+see any significant performance improvement. This is maybe because of the low trip count. We tried to use vectorization with and without OpenMP and we found out that in the case with OpenMP, the vectorization was decreasing the performance. So, we decided to use ivdep for the Intel compiler, to let the compiler decide in every case. Moreover, we didn't observe any better results with the other suggestions. In the case of gcc, none of the pragmas we tried gave better results than the base case.
 
 5.1.2
 
-Near-linear scalability was achieved in up to 8 threads. Thre was relatively little performance increase from 8 to 16 threads
+Near-linear scalability was achieved in up to 8 threads. There was relatively little performance increase from 8 to 16 threads
 because at 16 threads, the threads are spread over two sockets.
-The maximum performance was achieved at 16 threads. 
+The maximum performance was achieved at 16 threads.
 
 5.2.2
 
-LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts. 
+LULESH only accepts cubes of integers (i.e. That means, 1, 8, 27, etc.) as process counts.
 We want to keep one process per core. To use over 16 processes, one must use multiple nodes, in order to keep one process per core.
-We didn't have linear scalability, we had data that asymptotically approaches a maximum FOM at 64 processes and then starts to decrease slightly. Above 8 processes we have multiple processes per core, but we still have some improvement as process number increases because of hyperthreading. 
+We didn't have linear scalability, we had data that asymptotically approaches a maximum FOM at 64 processes and then starts to decrease slightly. Above 8 processes we have multiple processes per core, but we still have some improvement as process number increases because of hyperthreading.
 
-The maximum process count was achieved at 64. 
-The performance and scalability of the MPI results look similar to the OpenMP results. 
+The maximum process count was achieved at 64.
+The performance and scalability of the MPI results look similar to the OpenMP results.
 
 5.3.2
 
-The valid combinations are one process with one, two, four, eight, or sixteen threads, or eight processes
-with one or two threads. This is because Lulesh only allows integer cubes for process numbers, and on one node, to avoid having more than process per core, the product of processes and threads must be less than or equal to 16. 
+In the hybrid scenario, we still need the process counts to be cubes of integers, as these, and not the threads, define the way the domain is decomposed.
+Second, we need both the processes and threads to be greater than one to have truly hybrid scenarios.
+Finally, we assume the restriction of up to one thread per core. The only combination that follows all the rules is 8 processes with 2 threads but we studied also other combinations that are valid for LULESH, in order to see the general behavior.
 
-We have non-linear scalability in the truly hybrid MPI / OpenMP case, because we showed in previous answers that MPI and OpenMP do not have linear scalability, and combining both of them does not change this non-linear scalability.  
+As we expected, we still see non-linear scalability, as we overload the node above its capacity. Under the restrictions of the worksheet, we got our best performance with 8 processes and 2 threads, and this hybrid scheme was overall the best. The curve looked similar to the pure cases.
 
-If we run the hybrid process with one thread and one process, it is slower than the OpenMP or the MPI case because there is more overhead. However, for greater numbers of processes, the hybrid helps because it combines the advantages of both MPI and OpenMP. 
+There were two possible scenarios for the best performance. This {8,2} combination, [...] or 1 process with 16 threads, as these keep all the cores working and balanced. Our measurements proved the best.
 
-The hybrid solution is overall the fastest. 
-
-We would not have guesseed this combination because we have two combinations that use all the cores on one node. One is with one process and sixteen threads. The other is with eight processes and two threads. We wouldn't know the relative effect of OpenMP or MPI overheads before doing the experiments. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Extending the boundaries of the worksheet, we observed better performance with 8 processes and 4 threads on Sandybridge, because of Hyperthreading. We also had much better performance with 27 processes and 1 thread in the 28-core Hasswell nodes.
