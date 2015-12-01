@@ -1,1 +1,54 @@
+A 5 to 10 minute video with the required comments described in each task.
+
 3.1: Parallel programming errors
+
+Explain each of the below common errors. Mention which types of errors above are not exclusive to parallel programming. You are allowed to capture online resources in the video, such as illustrations, to help present your explanations.
+
+Race Condition
+
+(From https://en.wikipedia.org/wiki/Race_condition#Software)
+
+A race condition or race hazard is the behavior of an electronic, software or other system where the output is dependent on the sequence or timing of other uncontrollable events. It becomes a bug when events do not happen in the order the programmer intended. The term originates with the idea of two signals racing each other to influence the output first.
+
+Deadlock
+
+A deadlock is a situation in which two or more competing actions are each waiting for the other to finish, and thus neither ever does.
+
+Heisenbug (observer’s effect)
+
+(From https://en.wikipedia.org/wiki/Heisenbug)
+
+A heisenbug is a software bug that seems to disappear or alter its behavior when one attempts to study it.
+Heisenbugs occur because common attempts to debug a program, such as inserting output statements or running it in a debugger, usually modify the code, change the memory addresses of variables and the timing of its execution.
+
+
+Floating-point arithmetic challenges
+
+Comparisons
+
+(see http://floating-point-gui.de/errors/comparison/)
+
+Due to rounding errors, most floating-point numbers end up being slightly imprecise. As long as this imprecision stays small, it can usually be ignored. However, it also means that numbers expected to be equal (e.g. when calculating the same result through different correct methods) often differ slightly, and a simple equality test fails. 
+
+Definition of a zero and signed zeros
+
+(see https://en.wikipedia.org/wiki/Signed_zero)
+
+In the IEEE 754 standard, zero is signed, meaning that there exist both a "positive zero" (+0) and a "negative zero" (−0). In most run-time environments, positive zero is usually printed as "0" and the negative zero as "-0". The two values behave as equal in numerical comparisons, but some operations return different results for +0 and −0. For instance, 1/(−0) returns negative infinity, while 1/+0 returns positive infinity (so that the identity 1/(1/±∞) = ±∞ is maintained). Other common functions with a discontinuity at x=0 which might treat +0 and −0 differently include log(x), signum(x), and the principal square root of y + xi for any negative number y. As with any approximation scheme, operations involving "negative zero" can occasionally cause confusion. For example, in IEEE 754, x = y does not imply 1/x = 1/y, as 0 = −0 but 1/0 ≠ 1/−0.[11]
+
+Cancellation or loss of significance
+
+(see https://en.wikipedia.org/wiki/Loss_of_significance)
+
+Loss of significance is an undesirable effect in calculations using floating-point arithmetic. It occurs when an operation on two numbers increases relative error substantially more than it increases absolute error, for example in subtracting two nearly equal numbers (known as catastrophic cancellation). The effect is that the number of accurate (significant) digits in the result is reduced unacceptably. 
+
+Amplification and error
+
+(see https://en.wikipedia.org/wiki/Round-off_error)
+
+Amplification errors occur when a number cannot be represented exactly in floating point arithmetic. Then, if a series of calculations is performed on an unexactly represented numbers, this error is amplified. 
+
+
+
+
+
