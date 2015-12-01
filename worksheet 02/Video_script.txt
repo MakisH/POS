@@ -113,6 +113,33 @@ Appears when you dive (covered later) on a variable or select a menu item to vie
 Displays detailed information about selected program variables. Also permits editing, diving, filtering and sorting of variable data.
 Comprised of a single pane, pull-down menus, data field boxes and several action buttons.
 
+4.3.1: ASPECTS OF TOTAL VIEW'S GUI
+
+Control execution:
+See https://computing.llnl.gov/tutorials/totalview/#ControllingExecution
+
+Setting breakpoints:
+
+See https://computing.llnl.gov/tutorials/totalview/#Breakpoint
+
+Diving into functions:
+
+https://computing.llnl.gov/tutorials/totalview/#Diving
+
+View memory (variables and arrays):
+
+Memory Areas
+Use the variable lookup command:
+	Process Window  >  View Menu  >  Lookup Variable 
+Then enter either a hexadecimal address (must start with 0x) for a single location. Enter two hexadecimal addresses for a range.
+
+See also: https://computing.llnl.gov/tutorials/totalview/part2.html#Memory
+
+
+
+
+
+
 
 
 
