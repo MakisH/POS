@@ -135,6 +135,16 @@ Then enter either a hexadecimal address (must start with 0x) for a single locati
 
 See also: https://computing.llnl.gov/tutorials/totalview/part2.html#Memory
 
+5.1: FORK-JOIN MODEL
+
+see: https://en.wikipedia.org/wiki/Fork%E2%80%93join_model
+
+The fork–join model is a way of setting up and executing parallel programs, such that execution branches off in parallel at designated points in the program, to "join" (merge) at a subsequent point and resume sequential execution. Parallel sections may fork recursively until a certain task granularity is reached. Fork–join can be considered a parallel design pattern.
+
+6.1: MPI with TotalView
+
+
+
 
 
 
