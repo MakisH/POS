@@ -5,6 +5,9 @@ SHELL = /bin/sh
 
 LULESH_EXEC = lulesh2.0
 
+MPI_INC = /opt/ibmhpc/pecurrent/mpich2/intel/include64
+MPI_LIB = /opt/ibmhpc/pecurrent/mpich2/intel/lib64
+
 # Compiler to use for the serial and the MPI case.
 # For GCC serial, use g++ (load the module gcc/4.9).
 # For Intel serial, use icc (load the module intel/15.0).
