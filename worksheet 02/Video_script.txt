@@ -1,6 +1,8 @@
 A 5 to 10 minute video with the required comments described in each task.
 
-3.1: Parallel programming errors
+See: https://computing.llnl.gov/tutorials/totalview/
+
+3.1: PARALLEL PROGRAMMING ERRORS
 
 Explain each of the below common errors. Mention which types of errors above are not exclusive to parallel programming. You are allowed to capture online resources in the video, such as illustrations, to help present your explanations.
 
@@ -47,6 +49,105 @@ Amplification and error
 (see https://en.wikipedia.org/wiki/Round-off_error)
 
 Amplification errors occur when a number cannot be represented exactly in floating point arithmetic. Then, if a series of calculations is performed on an unexactly represented numbers, this error is amplified. 
+
+4.2.1: ASPECTS OF TOTAL VIEW'S GUI
+
+Session Manager:
+
+https://computing.llnl.gov/tutorials/totalview/#SessionManager
+
+Provides an easy way to:
+Launch a new program - serial or parallel
+Attach to a running program
+Load a core file
+Save a debug session for later
+Load a previously saved debug session
+
+https://computing.llnl.gov/tutorials/totalview/#Windows
+
+Root Window:
+
+Will always appear when the TotalView GUI is started.
+Provides an overview of all processes and threads, showing the TotalView assigned ID, MPI rank, host, status and brief description/name for each.
+Allows sorting by ID, rank, host and status.
+Provides the ability to expand/collapse each process to view/hide any included threads in that process.
+Pull-down menus - File, Edit, View, Tools, Window, Help (menus are discussed later)
+
+Process Window:
+
+Usually (but not always) appears with the Root Window after TotalView is started.
+By default, a single process window will display. For multi-process / multi-threaded programs however, every process and every thread may have its own Process Window if desired.
+Comprised of:
+Pull-down menus
+Execution control buttons
+Navigation control buttons
+Process and thread status bars
+4 "Panes"
+
+Stack Trace Pane:
+
+Shows the call stack of routines the current executable is running
+Selection of any routine shown in the call stack will automatically update the Process Window with its information.
+
+Stack Frame Pane:
+
+Displays the local variables, registers and function parameters for the selected executable.
+Register abbreviations and meanings are architecture specific. See the TotalView documentation for details.
+
+Source Pane:
+
+Displays source/assembler for the currently selected program or function.
+Shows program counter, line numbers and any associated action points.
+Only "boxed" line numbers are eligible for debugging.
+
+Action Points, Processes, Threads Pane:
+
+A multi-function pane. By default, it shows any action points (covered later) that have been set.
+May also select Processes to show attached processes or Threads to show associated threads.
+The Action Points display is shown above. The Processes and Threads displays are shown below.
+
+Variable Window:
+
+Probably the most common window after the Root and Process windows.
+Appears when you dive (covered later) on a variable or select a menu item to view variable information.
+Displays detailed information about selected program variables. Also permits editing, diving, filtering and sorting of variable data.
+Comprised of a single pane, pull-down menus, data field boxes and several action buttons.
+
+4.3.1: ASPECTS OF TOTAL VIEW'S GUI
+
+Control execution:
+See https://computing.llnl.gov/tutorials/totalview/#ControllingExecution
+
+Setting breakpoints:
+
+See https://computing.llnl.gov/tutorials/totalview/#Breakpoint
+
+Diving into functions:
+
+https://computing.llnl.gov/tutorials/totalview/#Diving
+
+View memory (variables and arrays):
+
+Memory Areas
+Use the variable lookup command:
+	Process Window  >  View Menu  >  Lookup Variable 
+Then enter either a hexadecimal address (must start with 0x) for a single location. Enter two hexadecimal addresses for a range.
+
+See also: https://computing.llnl.gov/tutorials/totalview/part2.html#Memory
+
+5.1: FORK-JOIN MODEL
+
+see: https://en.wikipedia.org/wiki/Fork%E2%80%93join_model
+
+The fork–join model is a way of setting up and executing parallel programs, such that execution branches off in parallel at designated points in the program, to "join" (merge) at a subsequent point and resume sequential execution. Parallel sections may fork recursively until a certain task granularity is reached. Fork–join can be considered a parallel design pattern.
+
+6.1: MPI with TotalView
+
+
+
+
+
+
 
 
 
