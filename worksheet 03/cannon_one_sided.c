@@ -23,6 +23,7 @@ int main (int argc, char **argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Get_processor_name(name, &len);
+
 	MPI_Win_create(sharedbuffer, NUM_ELEMENT, sizeof(int), MPI_INFO_NULL, MPI_COMM_WORLD, &win);
 
 
@@ -215,46 +216,46 @@ int main (int argc, char **argv) {
 		MPI_Win_fence(0, win);
 
 		// rotate blocks horizontally
-		int MPI_Get(void *origin_addr, int origin_count, MPI_Datatype
-            origin_datatype, int target_rank, MPI_Aint target_disp,
-            int target_count, MPI_Datatype target_datatype, MPI_Win
-            win)
+		MPI_Get(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + 1) % sqrt_size, 0,
+            A_local_block_size, MPI_DOUBLE, win);
 
 		MPI_Win_fence(0, win);
 
+		// Not sure if this second fence is necessary 
 		MPI_Win_fence(0, win);
 
-		int MPI_Put(const void *origin_addr, int origin_count, MPI_Datatype
-            origin_datatype, int target_rank, MPI_Aint target_disp,
-            int target_count, MPI_Datatype target_datatype, MPI_Win
-            win)
+		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+            A_local_block_size, MPI_DOUBLE, win);
 
 		MPI_Win_fence(0, win);
 
+		// FORMAT
+		// int MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype, 
+  		//      int dest, int sendtag, int source, int recvtag,
+  		//      MPI_Comm comm, MPI_Status *status)
+
+		// ORIGINAL CODE 
 		// MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE, 
 		// 		(coordinates[1] + sqrt_size - 1) % sqrt_size, 0, 
 		// 		(coordinates[1] + 1) % sqrt_size, 0, row_communicator, &status);
 
 		// rotate blocks vertically
+		MPI_Win_fence(0, win);
+
+		MPI_Get(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + 1) % sqrt_size, 0,
+            B_local_block_size, MPI_DOUBLE, win);
 
 		MPI_Win_fence(0, win);
 
-		int MPI_Get(void *origin_addr, int origin_count, MPI_Datatype
-            origin_datatype, int target_rank, MPI_Aint target_disp,
-            int target_count, MPI_Datatype target_datatype, MPI_Win
-            win)
+		// Not sure if this second fence is necessary 
+		MPI_Win_fence(0, win);
+
+		MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
+            B_local_block_size, MPI_DOUBLE, win);
 
 		MPI_Win_fence(0, win);
 
-		MPI_Win_fence(0, win);
-
-		int MPI_Put(const void *origin_addr, int origin_count, MPI_Datatype
-            origin_datatype, int target_rank, MPI_Aint target_disp,
-            int target_count, MPI_Datatype target_datatype, MPI_Win
-            win)
-
-		MPI_Win_fence(0, win);
-
+		// ORIGINAL CODE 
 		// MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE, 
 		// 		(coordinates[0] + sqrt_size - 1) % sqrt_size, 0, 
 		// 		(coordinates[0] + 1) % sqrt_size, 0, column_communicator, &status);
