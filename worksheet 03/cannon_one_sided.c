@@ -9,12 +9,14 @@ int main (int argc, char **argv) {
 	FILE *fp;
 	double **A = NULL, **B = NULL, **C = NULL, *A_array = NULL, *B_array = NULL, *C_array = NULL;
 	double *A_local_block = NULL, *B_local_block = NULL, *C_local_block = NULL;
+	double *A_shared_block = NULL, *B_shared_block = NULL;
 	int A_rows, A_columns, A_local_block_rows, A_local_block_columns, A_local_block_size;
 	int B_rows, B_columns, B_local_block_rows, B_local_block_columns, B_local_block_size;
 	int rank, size, sqrt_size, matrices_a_b_dimensions[4];
 	MPI_Comm cartesian_grid_communicator, row_communicator, column_communicator;
 	MPI_Status status; 
-	MPI_Win win;
+	MPI_Win win_A;
+	MPI_Win win_B;
 
 	// used to manage the cartesian grid
 	int dimensions[2], periods[2], coordinates[2], remain_dims[2];
@@ -22,10 +24,9 @@ int main (int argc, char **argv) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Get_processor_name(name, &len);
 
-	MPI_Win_create(sharedbuffer, NUM_ELEMENT, sizeof(int), MPI_INFO_NULL, MPI_COMM_WORLD, &win);
-
+	MPI_Win_create(A_shared_block, A_local_block_size, sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win_A);
+	MPI_Win_create(B_shared_block, B_local_block_size, sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win_B);
 
 	/* For square mesh */
 	sqrt_size = (int)sqrt((double) size);             
@@ -213,21 +214,21 @@ int main (int argc, char **argv) {
 		compute_time += MPI_Wtime() - start;
 		start = MPI_Wtime();
 
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_A);
 
 		// rotate blocks horizontally
 		MPI_Get(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + 1) % sqrt_size, 0,
-            A_local_block_size, MPI_DOUBLE, win);
+            A_local_block_size, MPI_DOUBLE, win_A);
 
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_A);
 
 		// Not sure if this second fence is necessary 
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_A);
 
 		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
-            A_local_block_size, MPI_DOUBLE, win);
+            A_local_block_size, MPI_DOUBLE, win_A);
 
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_A);
 
 		// FORMAT
 		// int MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype, 
@@ -240,20 +241,20 @@ int main (int argc, char **argv) {
 		// 		(coordinates[1] + 1) % sqrt_size, 0, row_communicator, &status);
 
 		// rotate blocks vertically
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_B);
 
 		MPI_Get(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + 1) % sqrt_size, 0,
-            B_local_block_size, MPI_DOUBLE, win);
+            B_local_block_size, MPI_DOUBLE, win_B);
 
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_B);
 
 		// Not sure if this second fence is necessary 
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_B);
 
 		MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
-            B_local_block_size, MPI_DOUBLE, win);
+            B_local_block_size, MPI_DOUBLE, win_B);
 
-		MPI_Win_fence(0, win);
+		MPI_Win_fence(0, win_B);
 
 		// ORIGINAL CODE 
 		// MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE, 
@@ -364,11 +365,14 @@ int main (int argc, char **argv) {
 		free(B_array);
 		free(C_array);
 	}
+
 	free(A_local_block);
 	free(B_local_block);
 	free(C_local_block);
 
 	// finalize MPI
+	MPI_Win_free(&win_A);
+	MPI_Win_free(&win_B);
 	MPI_Finalize();
 }
 
