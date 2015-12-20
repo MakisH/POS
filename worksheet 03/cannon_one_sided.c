@@ -14,6 +14,7 @@ int main (int argc, char **argv) {
 	int rank, size, sqrt_size, matrices_a_b_dimensions[4];
 	MPI_Comm cartesian_grid_communicator, row_communicator, column_communicator;
 	MPI_Status status; 
+	MPI_Win win;
 
 	// used to manage the cartesian grid
 	int dimensions[2], periods[2], coordinates[2], remain_dims[2];
@@ -21,6 +22,9 @@ int main (int argc, char **argv) {
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Get_processor_name(name, &len);
+	MPI_Win_create(sharedbuffer, NUM_ELEMENT, sizeof(int), MPI_INFO_NULL, MPI_COMM_WORLD, &win);
+
 
 	/* For square mesh */
 	sqrt_size = (int)sqrt((double) size);             
@@ -104,9 +108,11 @@ int main (int argc, char **argv) {
 	if(rank == 0) {
 		int i;
 		for(i = 1; i < size; i++){
+
 			MPI_Send(matrices_a_b_dimensions, 4, MPI_INT, i, 0, cartesian_grid_communicator);
 		}
 	} else {
+
 		MPI_Recv(matrices_a_b_dimensions, 4, MPI_INT, 0, 0, cartesian_grid_communicator, &status);
 	}
 
@@ -169,6 +175,7 @@ int main (int argc, char **argv) {
 	if(rank == 0) {
 		int i;
 		for(i = 1; i < size; i++){
+
 			MPI_Send((A_array + (i * A_local_block_size)), A_local_block_size, MPI_DOUBLE, i, 0, cartesian_grid_communicator);
 			MPI_Send((B_array + (i * B_local_block_size)), B_local_block_size, MPI_DOUBLE, i, 0, cartesian_grid_communicator);
 		}
@@ -179,14 +186,18 @@ int main (int argc, char **argv) {
 			B_local_block[i] = B_array[i];
 		}
 	} else {
+
 		MPI_Recv(A_local_block, A_local_block_size, MPI_DOUBLE, 0, 0, cartesian_grid_communicator, &status);
 		MPI_Recv(B_local_block, B_local_block_size, MPI_DOUBLE, 0, 0, cartesian_grid_communicator, &status);
 	}
 
 	// cannon's algorithm
+	
 	int cannon_block_cycle;
 	double compute_time = 0, mpi_time = 0, start;
 	int C_index, A_row, A_column, B_column;
+
+	// MAIN LOOP
 	for(cannon_block_cycle = 0; cannon_block_cycle < sqrt_size; cannon_block_cycle++){
 		// compute partial result for this block cycle
 		start = MPI_Wtime();
@@ -200,15 +211,56 @@ int main (int argc, char **argv) {
 		}
 		compute_time += MPI_Wtime() - start;
 		start = MPI_Wtime();
+
+		MPI_Win_fence(0, win);
+
 		// rotate blocks horizontally
-		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE, 
-				(coordinates[1] + sqrt_size - 1) % sqrt_size, 0, 
-				(coordinates[1] + 1) % sqrt_size, 0, row_communicator, &status);
+		int MPI_Get(void *origin_addr, int origin_count, MPI_Datatype
+            origin_datatype, int target_rank, MPI_Aint target_disp,
+            int target_count, MPI_Datatype target_datatype, MPI_Win
+            win)
+
+		MPI_Win_fence(0, win);
+
+		MPI_Win_fence(0, win);
+
+		int MPI_Put(const void *origin_addr, int origin_count, MPI_Datatype
+            origin_datatype, int target_rank, MPI_Aint target_disp,
+            int target_count, MPI_Datatype target_datatype, MPI_Win
+            win)
+
+		MPI_Win_fence(0, win);
+
+		// MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE, 
+		// 		(coordinates[1] + sqrt_size - 1) % sqrt_size, 0, 
+		// 		(coordinates[1] + 1) % sqrt_size, 0, row_communicator, &status);
+
 		// rotate blocks vertically
-		MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE, 
-				(coordinates[0] + sqrt_size - 1) % sqrt_size, 0, 
-				(coordinates[0] + 1) % sqrt_size, 0, column_communicator, &status);
+
+		MPI_Win_fence(0, win);
+
+		int MPI_Get(void *origin_addr, int origin_count, MPI_Datatype
+            origin_datatype, int target_rank, MPI_Aint target_disp,
+            int target_count, MPI_Datatype target_datatype, MPI_Win
+            win)
+
+		MPI_Win_fence(0, win);
+
+		MPI_Win_fence(0, win);
+
+		int MPI_Put(const void *origin_addr, int origin_count, MPI_Datatype
+            origin_datatype, int target_rank, MPI_Aint target_disp,
+            int target_count, MPI_Datatype target_datatype, MPI_Win
+            win)
+
+		MPI_Win_fence(0, win);
+
+		// MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE, 
+		// 		(coordinates[0] + sqrt_size - 1) % sqrt_size, 0, 
+		// 		(coordinates[0] + 1) % sqrt_size, 0, column_communicator, &status);
+
 		mpi_time += MPI_Wtime() - start;
+
 	}
 
 	// get C parts from other processes at rank 0
@@ -218,12 +270,15 @@ int main (int argc, char **argv) {
 		}
 		int i;
 		for(i = 1; i < size; i++){
+
 			MPI_Recv(C_array + (i * A_local_block_rows * B_local_block_columns), A_local_block_rows * B_local_block_columns, 
 				MPI_DOUBLE, i, 0, cartesian_grid_communicator, &status);
 		}
 	} else {
+
 		MPI_Send(C_local_block, A_local_block_rows * B_local_block_columns, MPI_DOUBLE, 0, 0, cartesian_grid_communicator);
 	}
+
 
 	// generating output at rank 0
 	if (rank == 0) {
