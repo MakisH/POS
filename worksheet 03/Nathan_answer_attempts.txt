@@ -1,1 +1,2 @@
+Useful information can be found here: 
 https://software.intel.com/en-us/blogs/2014/08/06/one-sided-communication describes one-sided communication
