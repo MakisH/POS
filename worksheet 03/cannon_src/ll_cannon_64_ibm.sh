@@ -8,7 +8,7 @@
 #@ node = 4
 #@ total_tasks = 64
 #@ node_usage = not_shared
-#@ energy_policy_tag = cannon_nonblocking_sb
+#@ energy_policy_tag = cannon_nonblocking_hw
 #@ minimize_time_to_solution = yes
 #@ notification = never
 #@ island_count = 1
@@ -27,8 +27,8 @@ VERSION="nonblocking"
 # As we need to run this in both SuperMUC Phase I and SuperMUC Phase II,
 # we define the respective binary here for convenience.
 # Please update the header of the jobscript respectively.
-ARCH="sb"
-#ARCH="hw"
+#ARCH="sb"
+ARCH="hw"
 
 BINARY="./cannon_${VERSION}_${ARCH}"
 
@@ -81,9 +81,4 @@ else
     date
   done
 fi
-
-echo
-echo lscpu:
-lscpu
-echo
 

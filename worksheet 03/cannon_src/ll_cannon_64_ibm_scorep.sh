@@ -34,18 +34,19 @@ ARCH="hw"
 
 BINARY="./cannon_${VERSION}_${ARCH}_scorep"
 
+# Size of matrices to test for
+N=4096
+
 export SCOREP_ENABLE_PROFILING=false
 export SCOREP_ENABLE_TRACING=true
-export SCOREP_EXPERIMENT_DIRECTORY=scorep_cannon_${VERSION}_${ARCH}
+export SCOREP_EXPERIMENT_DIRECTORY=scorep_cannon_${VERSION}_${ARCH}_${N}
 export SCOREP_TOTAL_MEMORY=100M
-
-# Size of matrices to test for
-N=1024
 
 echo Score-P job
 echo Version: ${VERSION}
 echo Architecture: ${ARCH}
 echo Binary: ${BINARY}
+ls -la ${BINARY}
 echo Matrix size: ${N}
 echo Profiling: ${SCOREP_ENABLE_PROFILING}
 echo Tracing: ${SCOREP_ENABLE_TRACING}

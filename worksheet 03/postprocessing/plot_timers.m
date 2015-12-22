@@ -227,7 +227,7 @@ grid on
 xlabel('Size N of the NxN input matrices')
 ylabel('Speedup [comp\_time]')
 title('Speedup [comp\_time] (median) - Non-blocking P2P')
-legend('SuperMUC Phase I - Sandybridge', 'SuperMUC Phas II - Haswell')
+legend('SuperMUC Phase I - Sandybridge', 'SuperMUC Phas II - Haswell', 'Location','northwest')
 
 
 
@@ -241,9 +241,9 @@ hold off
 xlim([0 5060]);
 set(gca,'XTick',[64, 256, 512, 1024, 2048, 4096])
 % set(gca, 'XTickLabelRotation', 90)
-ylim([0 10]);
+ylim([0 14]);
 grid on
 xlabel('Size N of the NxN input matrices')
 ylabel('Speedup [mpi\_time]')
 title('Speedup [mpi\_time] (median) - Non-blocking P2P')
-legend('SuperMUC Phase I - Sandybridge', 'SuperMUC Phas II - Haswell')
+legend('SuperMUC Phase I - Sandybridge', 'SuperMUC Phas II - Haswell', 'Location','northwest')

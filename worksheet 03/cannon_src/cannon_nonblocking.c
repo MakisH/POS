@@ -192,9 +192,11 @@ int main (int argc, char **argv) {
 	MPI_Request send_request_A = MPI_REQUEST_NULL, recv_request_A = MPI_REQUEST_NULL;
 	MPI_Request send_request_B = MPI_REQUEST_NULL, recv_request_B = MPI_REQUEST_NULL;
 	int test_send_request_A, test_send_request_B;
+	int test_recv_request_A, test_recv_request_B;
 	int posted_send_request_A, posted_send_request_B;
+	int received_A, received_B;
 
-	// First cycle of the main loop, peeled-off
+	// First cycle of the main loop, peeled-off. No waits and tests, only requests.
 	start_mpi = MPI_Wtime();
 		// Forward the current block of A
 		MPI_Isend(A_local_block, A_local_block_size, MPI_DOUBLE,
@@ -233,65 +235,73 @@ int main (int argc, char **argv) {
 	// Main loop (without the peeled-off first and last iterations)
 	for(cannon_block_cycle = 1; cannon_block_cycle < sqrt_size - 1; cannon_block_cycle++){
 
-		// Note: to make things simpler, we always try to receive first an A
-		//		 and then a B block. Since these are handled from different
-		//		 communicators, we probably could gain even more by assuming
-		//		 no order, but we have already made the code a bit complex
-		//		 and we have already achieved some overlapping.
-
+		// Note: the following region is not only MPI function calls, but it is
+		//		 nothing related to the actual computations either. To keep things
+		//		 simple, we add the time of the whole region to the mpi_time.
 		start_mpi = MPI_Wtime();
-			// wait to receive the A_buffer. It is needed to proceed
-			// with both the computations and the send request.
-			MPI_Wait(&recv_request_A, MPI_STATUS_IGNORE);
-		mpi_time += MPI_Wtime() - start_mpi;
+			// Since the A-messages and the B-messages are handled of different
+			// communicators, we don't know which we have first. Try to receive and
+			// process the first available.
+			received_A = 0;
+			received_B = 0;
+			while (!(received_A && received_B)) {
+					// Have we received, copied and re-asked for A_buffer already?
+					if (!received_A) {
+						// Test if the receive A_buffer request has been completed.
+						MPI_Test(&recv_request_A, &test_recv_request_A, MPI_STATUS_IGNORE);
+						if (test_recv_request_A) {
+							// Read the A_buffer to the A_local_block
+							*A_local_block = *A_buffer;
 
-		start_comp = MPI_Wtime();
-			// Read the A_buffer to the A_local_block
-			*A_local_block = *A_buffer;
-			// Reset the flag posted_send_request_A
-			posted_send_request_A = 0;
-		compute_time += MPI_Wtime() - start_comp;
+							// Post a receive request for the next A_buffer
+							MPI_Irecv(A_buffer, A_local_block_size, MPI_DOUBLE,
+									  (coordinates[1] + 1) % sqrt_size, 0,
+									  row_communicator, &recv_request_A);
 
-		start_mpi = MPI_Wtime();
-			// Post a receive request for the next A_buffer
-			MPI_Irecv(A_buffer, A_local_block_size, MPI_DOUBLE,
-					  (coordinates[1] + 1) % sqrt_size, 0,
-					  row_communicator, &recv_request_A);
+							// Reset the flag posted_send_request_A
+							posted_send_request_A = 0;
+							// Can we forward (send) A block already? (1st try)
+							MPI_Test(&send_request_A, &test_send_request_A, MPI_STATUS_IGNORE);
+							if (test_send_request_A) {
+								MPI_Isend(A_local_block, A_local_block_size, MPI_DOUBLE,
+										  (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+										  row_communicator, &send_request_A);
+								posted_send_request_A = 1;
+							}
 
-			// Can we forward (send) A block already? (1st try)
-			MPI_Test(&send_request_A, &test_send_request_A, MPI_STATUS_IGNORE);
-			if (test_send_request_A) {
-				MPI_Isend(A_local_block, A_local_block_size, MPI_DOUBLE,
-						  (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
-						  row_communicator, &send_request_A);
-				posted_send_request_A = 1;
-			}
+							// We are done with A_buffer
+							received_A = 1;
+						}
+					}
 
-			// wait to receive the B_buffer. It is needed to proceed
-			// with both the computations and the send request.
-			MPI_Wait(&recv_request_B, MPI_STATUS_IGNORE);
-		mpi_time += MPI_Wtime() - start_mpi;
+					// Have we received, copied and re-asked for B_buffer already?
+					if (!received_B) {
+						// Test if the receive B_buffer request has been complete.
+						MPI_Test(&recv_request_B, &test_recv_request_B, MPI_STATUS_IGNORE);
+						if (test_recv_request_B) {
+							// Read the B_buffer to the B_local_block
+							*B_local_block = *B_buffer;
 
-		start_comp = MPI_Wtime();
-			// Read the B_buffer to the B_local_block
-			*B_local_block = *B_buffer;
-			// Reset the flag posted_send_request_B
-			posted_send_request_B = 0;
-		compute_time += MPI_Wtime() - start_comp;
+							// Post a receive request for the next B_buffer
+							MPI_Irecv(B_buffer, B_local_block_size, MPI_DOUBLE,
+									  (coordinates[0] + 1) % sqrt_size, 0,
+									  column_communicator, &recv_request_B);
 
-		start_mpi = MPI_Wtime();
-			// Post a receive request for the next B_buffer
-			MPI_Irecv(B_buffer, B_local_block_size, MPI_DOUBLE,
-					  (coordinates[0] + 1) % sqrt_size, 0,
-					  column_communicator, &recv_request_B);
+							// Reset the flag posted_send_request_B
+							posted_send_request_B = 0;
+							// Can we forward (send) the B block already? (1st try)
+							MPI_Test(&send_request_B, &test_send_request_B, MPI_STATUS_IGNORE);
+							if (test_send_request_B) {
+								MPI_Isend(B_local_block, B_local_block_size, MPI_DOUBLE,
+										  (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
+										  column_communicator, &send_request_B);
+								posted_send_request_B = 1;
+							}
 
-			// Can we forward (send) the B block already? (1st try)
-			MPI_Test(&send_request_B, &test_send_request_B, MPI_STATUS_IGNORE);
-			if (test_send_request_B) {
-				MPI_Isend(B_local_block, B_local_block_size, MPI_DOUBLE,
-						  (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
-						  column_communicator, &send_request_B);
-				posted_send_request_B = 1;
+							// We are done with B_buffer
+							received_B = 1;
+						}
+					}
 			}
 		mpi_time += MPI_Wtime() - start_mpi;
 
@@ -308,6 +318,9 @@ int main (int argc, char **argv) {
 				}
 
 				start_mpi = MPI_Wtime();
+					// If statements inside a for loop may not be a good idea, but we
+					// can gain much by posting the send requests as soon as possible.
+					// We use nested if blocks in order to not call MPI_Test every time.
 					// Can we forward (send) A block now? (2nd try, repetitive)
 					if (!posted_send_request_A) {
 						MPI_Test(&send_request_A, &test_send_request_A, MPI_STATUS_IGNORE);
@@ -356,26 +369,38 @@ int main (int argc, char **argv) {
 
 	}
 
-	// Last cycle of the main loop, peeled-off
+	// Last cycle of the main loop, peeled-off. No new requests are posted.
 	start_mpi = MPI_Wtime();
-		// wait to receive the A_buffer.
-		MPI_Wait(&recv_request_A, MPI_STATUS_IGNORE);
+		received_A = 0;
+		received_B = 0;
+		while (!(received_A && received_B)) {
+				// Have we received, copied and re-asked for A_buffer already?
+				if (!received_A) {
+					// Test if the receive A_buffer request has been completed.
+					MPI_Test(&recv_request_A, &test_recv_request_A, MPI_STATUS_IGNORE);
+					if (test_recv_request_A) {
+						// Read the A_buffer to the A_local_block
+						*A_local_block = *A_buffer;
+						// We are done with A_buffer
+						received_A = 1;
+					}
+				}
+
+				// Have we received, copied and re-asked for B_buffer already?
+				if (!received_B) {
+					// Test if the receive B_buffer request has been complete.
+					MPI_Test(&recv_request_B, &test_recv_request_B, MPI_STATUS_IGNORE);
+					if (test_recv_request_B) {
+						// Read the B_buffer to the B_local_block
+						*B_local_block = *B_buffer;
+						// We are done with B_buffer
+						received_B = 1;
+					}
+				}
+		}
 	mpi_time += MPI_Wtime() - start_mpi;
 
 	start_comp = MPI_Wtime();
-		// Read the A_buffer to the A_local_block
-		*A_local_block = *A_buffer;
-	compute_time += MPI_Wtime() - start_comp;
-
-	start_mpi = MPI_Wtime();
-		// wait to receive the B_buffer.
-		MPI_Wait(&recv_request_B, MPI_STATUS_IGNORE);
-	mpi_time += MPI_Wtime() - start_mpi;
-
-	start_comp = MPI_Wtime();
-		// Read the B_buffer to the B_local_block
-		*B_local_block = *B_buffer;
-
 		// compute partial result for this block cycle
 		for(C_index = 0, A_row = 0; A_row < A_local_block_rows; A_row++){
 			for(B_column = 0; B_column < B_local_block_columns; B_column++, C_index++){
@@ -390,7 +415,6 @@ int main (int argc, char **argv) {
 
 
 	// get C parts from other processes at rank 0
-	// Makis: I guess we can't really gain anything by changing this. Let's measure it!
 	if(rank == 0) {
 		for(i = 0; i < A_local_block_rows * B_local_block_columns; i++){
 			C_array[i] = C_local_block[i];
