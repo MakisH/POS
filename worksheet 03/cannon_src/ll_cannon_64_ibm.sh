@@ -8,7 +8,7 @@
 #@ node = 4
 #@ total_tasks = 64
 #@ node_usage = not_shared
-#@ energy_policy_tag = cannon_nonblocking_hw
+#@ energy_policy_tag = cannon_nonblocking_sb
 #@ minimize_time_to_solution = yes
 #@ notification = never
 #@ island_count = 1
@@ -27,8 +27,8 @@ VERSION="nonblocking"
 # As we need to run this in both SuperMUC Phase I and SuperMUC Phase II,
 # we define the respective binary here for convenience.
 # Please update the header of the jobscript respectively.
-#ARCH="sb"
-ARCH="hw"
+ARCH="sb"
+#ARCH="hw"
 
 BINARY="./cannon_${VERSION}_${ARCH}"
 
@@ -41,6 +41,17 @@ BINARY="./cannon_${VERSION}_${ARCH}"
 #	We ommit it when running everything many times, in order to reduce the total job runtime.
 #	To make things simpler, we implemented an option to choose between testing or actual measuring.
 DO_TESTING=false
+
+echo Normal job for testing or measuring
+echo Version: ${VERSION}
+echo Architecture: ${ARCH}
+echo Binary: ${BINARY}
+ls -la ${BINARY}
+echo Testing: ${DO_TESTING}
+echo
+echo lscpu:
+lscpu
+echo
 
 if [ "$DO_TESTING" = true ]; then
   date
@@ -70,3 +81,9 @@ else
     date
   done
 fi
+
+echo
+echo lscpu:
+lscpu
+echo
+
