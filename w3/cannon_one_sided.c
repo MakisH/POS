@@ -25,9 +25,6 @@ int main (int argc, char **argv) {
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-	MPI_Win_create(A_shared_block, A_local_block_size, sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win_A);
-	MPI_Win_create(B_shared_block, B_local_block_size, sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win_B);
-
 	/* For square mesh */
 	sqrt_size = (int)sqrt((double) size);             
 	if(sqrt_size * sqrt_size != size){
@@ -129,11 +126,18 @@ int main (int argc, char **argv) {
 	A_local_block_size = A_local_block_rows * A_local_block_columns;
 	A_local_block = (double *) malloc (A_local_block_size * sizeof(double));
 
+	A_shared_block = (double *) malloc (A_local_block_size * sizeof(double));
+
 	// local metadata for B
 	B_local_block_rows = B_rows / sqrt_size;
 	B_local_block_columns = B_columns / sqrt_size;
 	B_local_block_size = B_local_block_rows * B_local_block_columns;
 	B_local_block = (double *) malloc (B_local_block_size * sizeof(double));
+
+	B_shared_block = (double *) malloc (B_local_block_size * sizeof(double));
+
+	MPI_Win_create(A_shared_block, A_local_block_size, sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win_A);
+	MPI_Win_create(B_shared_block, B_local_block_size, sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win_B);
 
 	// local metadata for C
 	C_local_block = (double *) malloc (A_local_block_rows * B_local_block_columns * sizeof(double));
