@@ -23,8 +23,8 @@ perf_off
 # we can select a version here, for convenience. Valid options: "provided", "nonblocking", "onesided".
 # Please update the header of the jobscript respectively.
 #VERSION="provided"
-VERSION="nonblocking"
-#VERSION="onesided"
+#VERSION="nonblocking"
+VERSION="one_sided"
 
 # As we need to run this in both SuperMUC Phase I and SuperMUC Phase II,
 # we define the respective binary here for convenience.

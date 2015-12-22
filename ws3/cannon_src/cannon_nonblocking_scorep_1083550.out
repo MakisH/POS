@@ -1,0 +1,21 @@
+
+DISK GROUP QUOTAS for home and project file systems:
+Filesystem                                 Quota     Used Space     Free Space
+/home/hpc/h039v           ($HOME)        102.4GB   88.3GB (86%)   14.1GB (14%)
+/gpfs/work/h039v          ($WORK)        1000.0GB   20.5MB ( 0%)  1000.0GB (100%)
+-------------------------------------------------------------------------------
+
+Executing LRZ User Prolog ...
+Switching off job=srv04-ib.1083550.0 for upcoming system performance measurements.
+Score-P job
+Version: one_sided
+Architecture: hw
+Binary: ./cannon_one_sided_hw_scorep
+Matrix size: 1024
+Profiling: false
+Tracing: true
+Score-P directory: scorep_cannon_one_sided_hw
+Score-P total memory: 100M
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.021036
+MPI time:         12.965469
