@@ -218,6 +218,15 @@ int main (int argc, char **argv) {
 		compute_time += MPI_Wtime() - start;
 		start = MPI_Wtime();
 
+		// Not sure if this second fence is necessary 
+		MPI_Win_fence(0, win_A);
+
+		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+            A_local_block_size, MPI_DOUBLE, win_A);
+
+		MPI_Win_fence(0, win_A);
+
+
 		MPI_Win_fence(0, win_A);
 
 		// rotate blocks horizontally
@@ -226,13 +235,6 @@ int main (int argc, char **argv) {
 
 		MPI_Win_fence(0, win_A);
 
-		// Not sure if this second fence is necessary 
-		MPI_Win_fence(0, win_A);
-
-		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
-            A_local_block_size, MPI_DOUBLE, win_A);
-
-		MPI_Win_fence(0, win_A);
 
 		// FORMAT
 		// int MPI_Sendrecv_replace(void *buf, int count, MPI_Datatype datatype, 
@@ -244,18 +246,18 @@ int main (int argc, char **argv) {
 		// 		(coordinates[1] + sqrt_size - 1) % sqrt_size, 0, 
 		// 		(coordinates[1] + 1) % sqrt_size, 0, row_communicator, &status);
 
-		// rotate blocks vertically
-		MPI_Win_fence(0, win_B);
-
-		MPI_Get(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + 1) % sqrt_size, 0,
-            B_local_block_size, MPI_DOUBLE, win_B);
-
-		MPI_Win_fence(0, win_B);
-
 		// Not sure if this second fence is necessary 
 		MPI_Win_fence(0, win_B);
 
 		MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
+            B_local_block_size, MPI_DOUBLE, win_B);
+
+		MPI_Win_fence(0, win_B);
+
+		// rotate blocks vertically
+		MPI_Win_fence(0, win_B);
+
+		MPI_Get(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + 1) % sqrt_size, 0,
             B_local_block_size, MPI_DOUBLE, win_B);
 
 		MPI_Win_fence(0, win_B);
