@@ -9,14 +9,12 @@ int main (int argc, char **argv) {
 	FILE *fp;
 	double **A = NULL, **B = NULL, **C = NULL, *A_array = NULL, *B_array = NULL, *C_array = NULL;
 	double *A_local_block = NULL, *B_local_block = NULL, *C_local_block = NULL;
-	double *A_shared_block = NULL, *B_shared_block = NULL;
+	double *A_shared_block_1 = NULL, *A_shared_block_2 = NULL, *B_shared_block_1 = NULL, *B_shared_block_2 = NULL;
 	int A_rows, A_columns, A_local_block_rows, A_local_block_columns, A_local_block_size;
 	int B_rows, B_columns, B_local_block_rows, B_local_block_columns, B_local_block_size;
 	int rank, size, sqrt_size, matrices_a_b_dimensions[4];
 	MPI_Comm cartesian_grid_communicator, row_communicator, column_communicator;
 	MPI_Status status;
-	MPI_Win win_A;
-	MPI_Win win_B;
 
 	// used to manage the cartesian grid
 	int dimensions[2], periods[2], coordinates[2], remain_dims[2];
@@ -125,19 +123,24 @@ int main (int argc, char **argv) {
 	A_local_block_columns = A_columns / sqrt_size;
 	A_local_block_size = A_local_block_rows * A_local_block_columns;
 	A_local_block = (double *) malloc (A_local_block_size * sizeof(double));
-
-	A_shared_block = (double *) malloc (A_local_block_size * sizeof(double));
+	A_shared_block_1 = (double *) malloc (A_local_block_size * sizeof(double));
+	A_shared_block_2 = (double *) malloc (A_local_block_size * sizeof(double));
 
 	// local metadata for B
 	B_local_block_rows = B_rows / sqrt_size;
 	B_local_block_columns = B_columns / sqrt_size;
 	B_local_block_size = B_local_block_rows * B_local_block_columns;
 	B_local_block = (double *) malloc (B_local_block_size * sizeof(double));
+	B_shared_block_1 = (double *) malloc (B_local_block_size * sizeof(double));
+	B_shared_block_2 = (double *) malloc (B_local_block_size * sizeof(double));
 
-	B_shared_block = (double *) malloc (B_local_block_size * sizeof(double));
+	MPI_Win win_A1, win_A2;
+	MPI_Win win_B1, win_B2;
 
-	MPI_Win_create(A_shared_block, A_local_block_size*sizeof(double), sizeof(double), MPI_INFO_NULL, row_communicator, &win_A);
-	MPI_Win_create(B_shared_block, B_local_block_size*sizeof(double), sizeof(double), MPI_INFO_NULL, column_communicator, &win_B);
+	MPI_Win_create(A_shared_block_1, A_local_block_size*sizeof(double), sizeof(double), MPI_INFO_NULL, row_communicator, &win_A1);
+	MPI_Win_create(A_shared_block_2, A_local_block_size*sizeof(double), sizeof(double), MPI_INFO_NULL, row_communicator, &win_A2);
+	MPI_Win_create(B_shared_block_1, B_local_block_size*sizeof(double), sizeof(double), MPI_INFO_NULL, column_communicator, &win_B1);
+	MPI_Win_create(B_shared_block_2, B_local_block_size*sizeof(double), sizeof(double), MPI_INFO_NULL, column_communicator, &win_B2);
 
 	// local metadata for C
 	C_local_block = (double *) malloc (A_local_block_rows * B_local_block_columns * sizeof(double));
@@ -203,17 +206,27 @@ int main (int argc, char **argv) {
 	double compute_time = 0, mpi_time = 0, start;
 	int C_index, A_row, A_column, B_column;
 
-	start = MPI_Wtime();
-		MPI_Win_fence(0, win_A);
-		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
-			A_local_block_size, MPI_DOUBLE, win_A);
+	// The main loop is expanded in {cycle 0, cycle 1, middle loop, cycle sqrt_size - 2, cycle sqrt_size - 1}.
+	// A bit different things happen in every cycle and we want to eliminate if-statements
+	// as much as possible.
+	// We use two windows and "buffers" for each matrix, in an attempt to increase the
+	// communication-computations overlap.
 
-		MPI_Win_fence(0, win_B);
+	// Cycle 0:
+	//   - Synchronize the windows.
+	//   - Start forwarding A,B to A1,B1.
+	//	 - Compute.
+	start = MPI_Wtime();
+		MPI_Win_fence(0, win_A1);
+		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+			A_local_block_size, MPI_DOUBLE, win_A1);
+
+		MPI_Win_fence(0, win_B1);
 		MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
-			B_local_block_size, MPI_DOUBLE, win_B);
+			B_local_block_size, MPI_DOUBLE, win_B1);
 	mpi_time += MPI_Wtime() - start;
 
-	// compute partial result for this block cycle
+	// compute partial result for cycle 0
 	start = MPI_Wtime();
 		for(C_index = 0, A_row = 0; A_row < A_local_block_rows; A_row++){
 			for(B_column = 0; B_column < B_local_block_columns; B_column++, C_index++){
@@ -225,20 +238,85 @@ int main (int argc, char **argv) {
 		}
 	compute_time += MPI_Wtime() - start;
 
-	for(cannon_block_cycle = 1; cannon_block_cycle < sqrt_size - 1; cannon_block_cycle++){
+	// Cycle 1:
+	//   - Complete transfering A,B to A1,B1.
+	//   - Start forwarding A1,B1 to A2,B2 to create a second data stream that is one step ahead.
+	//	 - Copy A1,B1 to the local blocks.
+	//   - Make sure every process completed copying.
+	//   - Start cycling the A1,B1.
+	//   - Compute.
+	start = MPI_Wtime();
+		MPI_Win_fence(0, win_A1);
+		*A_local_block = *A_shared_block_1;
+		MPI_Win_fence(0, win_A1);
+		MPI_Win_fence(0, win_A2);
+		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+			A_local_block_size, MPI_DOUBLE, win_A2);
+
+		MPI_Win_fence(0, win_B1);
+		*B_local_block = *B_shared_block_1;
+		MPI_Win_fence(0, win_B1);
+		MPI_Win_fence(0, win_B2);
+		MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
+			B_local_block_size, MPI_DOUBLE, win_B2);
+
+		MPI_Win_fence(0, win_A1);
+		MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+			A_local_block_size, MPI_DOUBLE, win_A1);
+
+		MPI_Win_fence(0, win_B1);
+		MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
+			B_local_block_size, MPI_DOUBLE, win_B1);
+	mpi_time += MPI_Wtime() - start;
+
+	// compute partial result for cycle 1
+	start = MPI_Wtime();
+		for(C_index = 0, A_row = 0; A_row < A_local_block_rows; A_row++){
+			for(B_column = 0; B_column < B_local_block_columns; B_column++, C_index++){
+				for(A_column = 0; A_column < A_local_block_columns; A_column++){
+					C_local_block[C_index] += A_local_block[A_row * A_local_block_columns + A_column] *
+						B_local_block[A_column * B_local_block_columns + B_column];
+				}
+			}
+		}
+	compute_time += MPI_Wtime() - start;
+
+	// Middle loop:
+	//   Switch between the two different windows 1 and 2 to allow more time for communication completion.
+	//	 For the even values of the loop index, work with the A2/B2. For the odd work with the A1/B1.
+	//   - Complete the cycling of the blocks (that started two iterations before), or the cycle 1 forwarding.
+	//   - Copy the shared blocks to the local blocks.
+	//   - Make sure every process completed copying.
+	//   - Start again cycling the blocks.
+	//   - Compute.
+	for(cannon_block_cycle = 2; cannon_block_cycle < sqrt_size - 2; cannon_block_cycle++){
 
 		start = MPI_Wtime();
-			MPI_Win_fence(0, win_A);
-			*A_local_block = *A_shared_block;
-			MPI_Win_fence(0, win_A);
-			MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
-				A_local_block_size, MPI_DOUBLE, win_A);
+			if (cannon_block_cycle % 2 == 0) {
+				MPI_Win_fence(0, win_A2);
+				*A_local_block = *A_shared_block_2;
+				MPI_Win_fence(0, win_A2);
+				MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+					A_local_block_size, MPI_DOUBLE, win_A2);
 
-			MPI_Win_fence(0, win_B);
-			*B_local_block = *B_shared_block;
-			MPI_Win_fence(0, win_B);
-			MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
-				B_local_block_size, MPI_DOUBLE, win_B);
+				MPI_Win_fence(0, win_B2);
+				*B_local_block = *B_shared_block_2;
+				MPI_Win_fence(0, win_B2);
+				MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
+					B_local_block_size, MPI_DOUBLE, win_B2);
+			} else {
+				MPI_Win_fence(0, win_A1);
+				*A_local_block = *A_shared_block_1;
+				MPI_Win_fence(0, win_A1);
+				MPI_Put(A_local_block, A_local_block_size, MPI_DOUBLE, (coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
+					A_local_block_size, MPI_DOUBLE, win_A1);
+
+				MPI_Win_fence(0, win_B1);
+				*B_local_block = *B_shared_block_1;
+				MPI_Win_fence(0, win_B1);
+				MPI_Put(B_local_block, B_local_block_size, MPI_DOUBLE, (coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
+					B_local_block_size, MPI_DOUBLE, win_B1);
+			}
 		mpi_time += MPI_Wtime() - start;
 
 		// compute partial result for this block cycle
@@ -255,25 +333,54 @@ int main (int argc, char **argv) {
 
 	}
 
+	// Cycle sqrt_size - 2:
+	//   - Complete the previous communications on win_A2 and win_B2.
+	//   - Copy the shared blocks to the local blocks.
+	//   - Compute.
+	//   - No new connections are started.
 	start = MPI_Wtime();
-		MPI_Win_fence(0, win_A);
-		*A_local_block = *A_shared_block;
-		// MPI_Win_fence(0, win_A);
-		MPI_Win_fence(0, win_B);
-		*B_local_block = *B_shared_block;
-		// MPI_Win_fence(0, win_B);
+		MPI_Win_fence(0, win_A2);
+		*A_local_block = *A_shared_block_2;
+
+		MPI_Win_fence(0, win_B2);
+		*B_local_block = *B_shared_block_2;
 	mpi_time += MPI_Wtime() - start;
 
-	// compute partial result for this block cycle
+	// compute partial result for cycle sqrt_size - 2
 	start = MPI_Wtime();
-	for(C_index = 0, A_row = 0; A_row < A_local_block_rows; A_row++){
-		for(B_column = 0; B_column < B_local_block_columns; B_column++, C_index++){
-			for(A_column = 0; A_column < A_local_block_columns; A_column++){
-				C_local_block[C_index] += A_local_block[A_row * A_local_block_columns + A_column] *
-					B_local_block[A_column * B_local_block_columns + B_column];
+		for(C_index = 0, A_row = 0; A_row < A_local_block_rows; A_row++){
+			for(B_column = 0; B_column < B_local_block_columns; B_column++, C_index++){
+				for(A_column = 0; A_column < A_local_block_columns; A_column++){
+					C_local_block[C_index] += A_local_block[A_row * A_local_block_columns + A_column] *
+						B_local_block[A_column * B_local_block_columns + B_column];
+				}
 			}
 		}
-	}
+	compute_time += MPI_Wtime() - start;
+
+	// Cycle sqrt_size - 1:
+	//   - Complete the previous communications on win_A1 and win_B1.
+	//   - Copy the shared blocks to the local blocks.
+	//   - Compute.
+	//   - No new connections are started.
+	start = MPI_Wtime();
+		MPI_Win_fence(0, win_A1);
+		*A_local_block = *A_shared_block_1;
+
+		MPI_Win_fence(0, win_B1);
+		*B_local_block = *B_shared_block_1;
+	mpi_time += MPI_Wtime() - start;
+
+	// compute partial result for cycle sqrt_size - 1
+	start = MPI_Wtime();
+		for(C_index = 0, A_row = 0; A_row < A_local_block_rows; A_row++){
+			for(B_column = 0; B_column < B_local_block_columns; B_column++, C_index++){
+				for(A_column = 0; A_column < A_local_block_columns; A_column++){
+					C_local_block[C_index] += A_local_block[A_row * A_local_block_columns + A_column] *
+						B_local_block[A_column * B_local_block_columns + B_column];
+				}
+			}
+		}
 	compute_time += MPI_Wtime() - start;
 
 	// get C parts from other processes at rank 0
@@ -377,8 +484,10 @@ int main (int argc, char **argv) {
 	free(A_local_block);
 	free(B_local_block);
 	free(C_local_block);
-	MPI_Win_free(&win_A);
-	MPI_Win_free(&win_B);
+	MPI_Win_free(&win_A1);
+	MPI_Win_free(&win_A2);
+	MPI_Win_free(&win_B1);
+	MPI_Win_free(&win_B2);
 	// finalize MPI
 	MPI_Finalize();
 }
