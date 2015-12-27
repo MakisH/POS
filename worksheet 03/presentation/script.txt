@@ -1,0 +1,68 @@
+Hello!
+I am Gerasimos and I will present you our work on MPI P2P and one-sided communication!
+----
+In this worksheet, we try to improve the performance of a given implementation of the Cannon's algorithm for multiplying matrices.
+
+This algorithm works in N times N grids of processes and it completes in N steps.
+
+In every step, every process works on blocks of the input matrices that are then re-distributed in two directions.
+------
+The provided implementation already provides two communicators for the these directions and it uses blocking P2P communication.
+
+Our task is to change this to non-blocking P2P communication and then to one-sided communication to improve the performance in the main loop.
+----
+We worked on the two SuperMUC systems and these are the most important differences between them. Later we will see how the faster memory access and network favor the newer machine.
+----
+The jobscript file we have submitted is used in every case, adjusting the variables inside it accordingly.
+
+The main change you will see, is that we are running every test many times inside the same job, using a for loop. We do that in order to deal with the high variance in the runtime, something you will see in our plots. In every case, we pick the median as a measure instead of the average, to deal better with outliers.
+----
+The scaling plots in respect to the problem size are clearly divided in two regions, bellow and above N of five hundred twelve. Below this point, the communication time (red) dominates, making the problem communication-bounded. Above that point, it becomes compute-bounded.
+
+As you can see, Haswell performs the same in computations, but a bit better in communication.
+----
+We analyzed every scenario also in Vampir and here you may see how the processes get blocked during communication.
+----
+
+In our non-blocking implementation, we changed the Sendrecv() operation with immediate sends and receives, as well as tests to find out if we can update our buffers or waits when we can't proceed with the next steps.
+
+We try to start the connections as soon as possible and in the meanwhile we work using a copy of the buffers. We do not assume any order in A and B and we try to send before, during and finally after the main computational loop.
+----
+Here we see a similar image, but with lower communication time for bigger problems, especially for Haswell. The critical point stays the same.
+---
+These speedup plots may allow for a better understanding.
+
+Haswell is really favored by this method.
+
+---
+How much can we overlap communication and computations?
+
+The region we are interested into is only a small part of the whole application, and the total time spent by all the processes for communication in this loop, is a bit more than ten percent for our biggest problem on Haswell.
+---
+
+This is the tracing profile we acquire with our non-blocking implementation. Here, the communication time is reduced to 2%.
+
+---
+Next, we investigate the one-sied communication using the Put and Window fence functions. Our approach is similar to the non-blocking case, using again an extra pointer for each block.
+
+More precisely, we are using two windows and two extra pointers for each of A and B, trying to allow for more time between window fences. One of two two datastreams is always a step ahead and we alternate between them.
+
+---
+This approach unfortunately didn't perform so well, increasing significantly the communication time. In the communication-bounded area of the graph, we also observe big variance in the compute time. This is probably because of energy management.
+
+---
+Plotting the speedup, we see again that the performance is poor and that the critical point moved higher. But we also see that the performance increases with the size of the problem. Maybe it is worth it in bigger problems.
+---
+Still, the two-window method performed a bit better than our first one-window implementation.
+
+It is also impressive how much reproducible the communication time is. Again, Haswell performs somewhat better.
+---
+About the overlapping, this is the tracing profile of our implementation and we see that the communication time is takes around 6%.
+
+Please note that our "mpi_time" includes also all the necessary non-mpi overhead we introduced for this.
+
+---
+In a few words, the performance of this application can easily be improved, it is compute-bounded above five hundred twelve and the communication time can be decreased with non-blocking communication, especially for Haswell. The one-sided case didn't perform so well for this problem, but maybe it performs better for bigger problems. Finally, Vampir helped us a lot in our task.
+
+---
+If we could choose where to focus next, we would try to minimize the overhead caused by the central management of the communication and input by the Rank0. Also, we would like to see how the compute time is affected by turning on architecture-specific optimizations.
