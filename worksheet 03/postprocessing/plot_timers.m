@@ -6,7 +6,7 @@ VERSION = 'provided';
 ARCH = 'sb';
 N=64;
 N_COUNT=7;
-REPETITIONS=10;
+REPETITIONS=30;
 
 data_raw = read_files(VERSION, ARCH, N, N_COUNT, REPETITIONS);
 
@@ -51,7 +51,7 @@ VERSION = 'provided';
 ARCH = 'hw';
 N=64;
 N_COUNT=7;
-REPETITIONS=10;
+REPETITIONS=30;
 
 data_raw = read_files(VERSION, ARCH, N, N_COUNT, REPETITIONS);
 
@@ -98,7 +98,7 @@ VERSION = 'nonblocking';
 ARCH = 'sb';
 N=64;
 N_COUNT=7;
-REPETITIONS=10;
+REPETITIONS=30;
 
 data_raw = read_files(VERSION, ARCH, N, N_COUNT, REPETITIONS);
 
@@ -148,7 +148,7 @@ VERSION = 'nonblocking';
 ARCH = 'hw';
 N=64;
 N_COUNT=7;
-REPETITIONS=10;
+REPETITIONS=30;
 
 data_raw = read_files(VERSION, ARCH, N, N_COUNT, REPETITIONS);
 
@@ -197,7 +197,7 @@ VERSION = 'onesided';
 ARCH = 'sb';
 N=64;
 N_COUNT=7;
-REPETITIONS=10;
+REPETITIONS=30;
 
 data_raw = read_files(VERSION, ARCH, N, N_COUNT, REPETITIONS);
 
@@ -247,7 +247,7 @@ VERSION = 'onesided';
 ARCH = 'hw';
 N=64;
 N_COUNT=7;
-REPETITIONS=10;
+REPETITIONS=30;
 
 data_raw = read_files(VERSION, ARCH, N, N_COUNT, REPETITIONS);
 
@@ -349,7 +349,7 @@ hold off
 xlim([0 5060]);
 set(gca,'XTick',[64, 256, 512, 1024, 2048, 4096])
 % set(gca, 'XTickLabelRotation', 90)
-ylim([0 14]);
+ylim([0 18]);
 grid on
 xlabel('Size N of the NxN input matrices')
 ylabel('Speedup [mpi\_time]')
@@ -389,7 +389,7 @@ hold off
 xlim([0 5060]);
 set(gca,'XTick',[64, 256, 512, 1024, 2048, 4096])
 % set(gca, 'XTickLabelRotation', 90)
-ylim([0 14]);
+ylim([0 2]);
 grid on
 xlabel('Size N of the NxN input matrices')
 ylabel('Speedup [mpi\_time]')

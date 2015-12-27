@@ -1,6 +1,6 @@
-VERSION=nonblocking
-CC=mpicc
-#CC=scorep mpicc
+VERSION=onesided
+#CC=mpicc
+CC=scorep mpicc
 SRC_TEST=cannon_$(VERSION)
 
 all:

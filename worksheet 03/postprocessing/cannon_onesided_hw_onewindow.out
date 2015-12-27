@@ -1,0 +1,326 @@
+
+DISK GROUP QUOTAS for home and project file systems:
+Filesystem                                 Quota     Used Space     Free Space
+/home/hpc/h039v           ($HOME)        102.4GB   88.5GB (86%)   13.9GB (14%)
+/gpfs/work/h039v          ($WORK)        1000.0GB   20.5MB ( 0%)  1000.0GB (100%)
+-------------------------------------------------------------------------------
+
+Executing LRZ User Prolog ...
+/home/hpc/h039v/h039vaq/.bashrc: line 10: module: command not found
+/home/hpc/h039v/h039vaq/.bashrc: line 11: module: command not found
+Normal job for testing or measuring
+Version: onesided
+Architecture: hw
+Binary: ./cannon_onesided_hw
+-rwxr-xr-x 1 h039vaq h039v 29644 Dec 23 13:39 ./cannon_onesided_hw
+Testing: false
+
+lscpu:
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                56
+On-line CPU(s) list:   0-55
+Thread(s) per core:    2
+Core(s) per socket:    14
+Socket(s):             2
+NUMA node(s):          4
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 63
+Stepping:              2
+CPU MHz:               1200.000
+BogoMIPS:              5199.87
+Virtualization:        VT-x
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              17920K
+NUMA node0 CPU(s):     0-6,28-34
+NUMA node1 CPU(s):     7-13,35-41
+NUMA node2 CPU(s):     14-20,42-48
+NUMA node3 CPU(s):     21-27,49-55
+
+Wed Dec 23 13:52:59 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000009
+MPI time:         0.015352
+Wed Dec 23 13:53:01 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000060
+MPI time:         0.015139
+Wed Dec 23 13:53:04 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000344
+MPI time:         0.015515
+Wed Dec 23 13:53:06 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001185
+MPI time:         0.016142
+Wed Dec 23 13:53:08 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017120
+MPI time:         0.018851
+Wed Dec 23 13:53:11 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.299627
+MPI time:         0.049934
+Wed Dec 23 13:53:15 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.436882
+MPI time:         0.192239
+Wed Dec 23 13:53:26 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000009
+MPI time:         0.015691
+Wed Dec 23 13:53:29 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000057
+MPI time:         0.015324
+Wed Dec 23 13:53:31 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000226
+MPI time:         0.015583
+Wed Dec 23 13:53:33 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.002387
+MPI time:         0.015019
+Wed Dec 23 13:53:36 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.019866
+MPI time:         0.023905
+Wed Dec 23 13:53:38 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.299370
+MPI time:         0.044207
+Wed Dec 23 13:53:42 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.397638
+MPI time:         0.200165
+Wed Dec 23 13:53:54 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000009
+MPI time:         0.015390
+Wed Dec 23 13:53:56 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000037
+MPI time:         0.015001
+Wed Dec 23 13:53:58 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000440
+MPI time:         0.015670
+Wed Dec 23 13:54:00 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001189
+MPI time:         0.015730
+Wed Dec 23 13:54:02 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017649
+MPI time:         0.016028
+Wed Dec 23 13:54:05 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.300756
+MPI time:         0.034770
+Wed Dec 23 13:54:09 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.511383
+MPI time:         0.187393
+Wed Dec 23 13:54:20 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000009
+MPI time:         0.015240
+Wed Dec 23 13:54:23 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000030
+MPI time:         0.015503
+Wed Dec 23 13:54:25 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000179
+MPI time:         0.015808
+Wed Dec 23 13:54:27 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001422
+MPI time:         0.015715
+Wed Dec 23 13:54:29 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017688
+MPI time:         0.012912
+Wed Dec 23 13:54:32 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.300648
+MPI time:         0.050995
+Wed Dec 23 13:54:36 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.423487
+MPI time:         0.216223
+Wed Dec 23 13:54:47 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000011
+MPI time:         0.015491
+Wed Dec 23 13:54:49 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000046
+MPI time:         0.015094
+Wed Dec 23 13:54:51 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000173
+MPI time:         0.020144
+Wed Dec 23 13:54:53 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001492
+MPI time:         0.015880
+Wed Dec 23 13:54:55 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017183
+MPI time:         0.014029
+Wed Dec 23 13:54:58 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.299837
+MPI time:         0.028697
+Wed Dec 23 13:55:02 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.412013
+MPI time:         0.229745
+Wed Dec 23 13:55:13 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000009
+MPI time:         0.015856
+Wed Dec 23 13:55:15 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000031
+MPI time:         0.015947
+Wed Dec 23 13:55:17 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000184
+MPI time:         0.016055
+Wed Dec 23 13:55:19 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001189
+MPI time:         0.015530
+Wed Dec 23 13:55:22 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017018
+MPI time:         0.020403
+Wed Dec 23 13:55:24 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.299234
+MPI time:         0.051580
+Wed Dec 23 13:55:29 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.440185
+MPI time:         0.219291
+Wed Dec 23 13:55:39 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000012
+MPI time:         0.015230
+Wed Dec 23 13:55:41 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000030
+MPI time:         0.015229
+Wed Dec 23 13:55:43 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000342
+MPI time:         0.015974
+Wed Dec 23 13:55:45 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001178
+MPI time:         0.018500
+Wed Dec 23 13:55:47 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017982
+MPI time:         0.017982
+Wed Dec 23 13:55:50 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.299572
+MPI time:         0.038190
+Wed Dec 23 13:55:54 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.505128
+MPI time:         0.161056
+Wed Dec 23 13:56:06 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000009
+MPI time:         0.015589
+Wed Dec 23 13:56:08 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000029
+MPI time:         0.015833
+Wed Dec 23 13:56:10 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000279
+MPI time:         0.015012
+Wed Dec 23 13:56:13 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001173
+MPI time:         0.022559
+Wed Dec 23 13:56:16 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017432
+MPI time:         0.025022
+Wed Dec 23 13:56:19 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.298903
+MPI time:         0.046917
+Wed Dec 23 13:56:22 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.433288
+MPI time:         0.202348
+Wed Dec 23 13:56:33 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000024
+MPI time:         0.015582
+Wed Dec 23 13:56:36 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000033
+MPI time:         0.015460
+Wed Dec 23 13:56:38 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000172
+MPI time:         0.015869
+Wed Dec 23 13:56:40 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001230
+MPI time:         0.016047
+Wed Dec 23 13:56:42 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017311
+MPI time:         0.014908
+Wed Dec 23 13:56:44 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.299298
+MPI time:         0.037264
+Wed Dec 23 13:56:49 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.446541
+MPI time:         0.261067
+Wed Dec 23 13:57:00 CET 2015
+(64,64)x(64,64)=(64,64)
+Computation time: 0.000009
+MPI time:         0.015344
+Wed Dec 23 13:57:02 CET 2015
+(128,128)x(128,128)=(128,128)
+Computation time: 0.000030
+MPI time:         0.015571
+Wed Dec 23 13:57:04 CET 2015
+(256,256)x(256,256)=(256,256)
+Computation time: 0.000175
+MPI time:         0.015759
+Wed Dec 23 13:57:06 CET 2015
+(512,512)x(512,512)=(512,512)
+Computation time: 0.001185
+MPI time:         0.015737
+Wed Dec 23 13:57:09 CET 2015
+(1024,1024)x(1024,1024)=(1024,1024)
+Computation time: 0.017186
+MPI time:         0.013802
+Wed Dec 23 13:57:12 CET 2015
+(2048,2048)x(2048,2048)=(2048,2048)
+Computation time: 0.299787
+MPI time:         0.046096
+Wed Dec 23 13:57:17 CET 2015
+(4096,4096)x(4096,4096)=(4096,4096)
+Computation time: 2.434025
+MPI time:         0.267060
+Wed Dec 23 13:57:28 CET 2015
+
+All the tests completed!

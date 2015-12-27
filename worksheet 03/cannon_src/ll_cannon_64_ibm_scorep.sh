@@ -2,13 +2,13 @@
 #@ wall_clock_limit = 00:05:00
 #@ job_name = pos-cannon-mpi-ibm-scorep
 #@ job_type = Parallel
-#@ output = cannon_nonblocking_scorep_$(jobid).out
-#@ error = cannon_nonblocking_scorep_$(jobid).out
+#@ output = cannon_onesided_scorep_$(jobid).out
+#@ error = cannon_onesided_scorep_$(jobid).out
 #@ class = test
 #@ node = 4
 #@ total_tasks = 64
 #@ node_usage = not_shared
-#@ energy_policy_tag = cannon_nonblocking_hw_scorep
+#@ energy_policy_tag = cannon_onesided_hw_scorep
 #@ minimize_time_to_solution = yes
 #@ notification = never
 #@ island_count = 1
@@ -23,8 +23,8 @@ perf_off
 # we can select a version here, for convenience. Valid options: "provided", "nonblocking", "onesided".
 # Please update the header of the jobscript respectively.
 #VERSION="provided"
-VERSION="nonblocking"
-#VERSION="onesided"
+#VERSION="nonblocking"
+VERSION="onesided"
 
 # As we need to run this in both SuperMUC Phase I and SuperMUC Phase II,
 # we define the respective binary here for convenience.
