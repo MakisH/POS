@@ -1,1 +1,0 @@
-binvcrhs*; matvec_sub*; matmul_sub*; exact_solution*; binvrhs*; lhs*init* -- 0
