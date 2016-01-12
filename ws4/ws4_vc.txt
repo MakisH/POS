@@ -1,0 +1,12 @@
+Section 2.2:
+
+Describe the transformations from point-to-point to collective operations that were applied to the code. Additionally, answer the following questions:
+• Would you expect performance or scalability benefits from the changes in this application? Explain. • Is the resulting code easier to understand and maintain after the changes? If yes, why?
+
+3.2 Required Video Commentary
+
+Describe the transformations from POSIX to MPI-IO operations that were applied to the code. Additionally, answer the following questions:
+• What is "Data Sieving" and "2-Phase IO"? How do they help improve IO performance?
+• Was the original implementation scalable in terms of IO performance?
+• Was the original implementation scalable in terms of RAM storage?
+• How much of the communication in the application was replaced with MPI-IO operations?
