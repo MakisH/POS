@@ -167,26 +167,24 @@ int main (int argc, char **argv) {
 
 	// send a block to each process
 	// using scatter
-	if(rank == 0){
 		MPI_Scatter(
 				A_array,
-				size,
+				A_local_block_size,
 				MPI_DOUBLE,
 				A_local_block,
-				1,
+				A_local_block_size,
 				MPI_DOUBLE,
 				0,
 				cartesian_grid_communicator);
 		MPI_Scatter(
 				B_array,
-				size,
+				B_local_block_size,
 				MPI_DOUBLE,
 				B_local_block,
-				1,
+				B_local_block_size,
 				MPI_DOUBLE,
 				0,
 				cartesian_grid_communicator);
-	}
 
 	// cannon's algorithm
 	int cannon_block_cycle;
