@@ -18,9 +18,9 @@
 . /etc/profile.d/modules.sh
 
 date
-mpiexec -n 64 ./cannon 64x64-1.in 64x64-2.in
+mpiexec -n 64 ./cannon 64x64-1.in 64x64-2.in test
 date
-mpiexec -n 64 ./cannon 128x128-1.in 128x128-2.in
+mpiexec -n 64 ./cannon 128x128-1.in 128x128-2.in test
 date
 mpiexec -n 64 ./cannon 256x256-1.in 256x256-2.in
 date

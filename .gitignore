@@ -4,6 +4,7 @@
 *.idk
 *.ods\#
 *.DS_Store
+*.in
 *.localized
 worksheet\ 01/videos/
 

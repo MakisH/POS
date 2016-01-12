@@ -100,6 +100,7 @@ int main (int argc, char **argv) {
 	}
 
 	// send dimensions to all peers
+	
 	if(rank == 0) {
 		int i;
 		for(i = 1; i < size; i++){
@@ -165,21 +166,26 @@ int main (int argc, char **argv) {
 	} 
 
 	// send a block to each process
-	if(rank == 0) {
-		int i;
-		for(i = 1; i < size; i++){
-			MPI_Send((A_array + (i * A_local_block_size)), A_local_block_size, MPI_DOUBLE, i, 0, cartesian_grid_communicator);
-			MPI_Send((B_array + (i * B_local_block_size)), B_local_block_size, MPI_DOUBLE, i, 0, cartesian_grid_communicator);
-		}
-		for(i = 0; i < A_local_block_size; i++){
-			A_local_block[i] = A_array[i];
-		}
-		for(i = 0; i < B_local_block_size; i++){
-			B_local_block[i] = B_array[i];
-		}
-	} else {
-		MPI_Recv(A_local_block, A_local_block_size, MPI_DOUBLE, 0, 0, cartesian_grid_communicator, &status);
-		MPI_Recv(B_local_block, B_local_block_size, MPI_DOUBLE, 0, 0, cartesian_grid_communicator, &status);
+	// using scatter
+	if(rank == 0){
+		MPI_Scatter(
+				A_array,
+				size,
+				MPI_DOUBLE,
+				A_local_block,
+				1,
+				MPI_DOUBLE,
+				0,
+				cartesian_grid_communicator);
+		MPI_Scatter(
+				B_array,
+				size,
+				MPI_DOUBLE,
+				B_local_block,
+				1,
+				MPI_DOUBLE,
+				0,
+				cartesian_grid_communicator);
 	}
 
 	// cannon's algorithm
