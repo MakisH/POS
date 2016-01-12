@@ -100,15 +100,13 @@ int main (int argc, char **argv) {
 	}
 
 	// send dimensions to all peers
+	MPI_Bcast(matrices_a_b_dimensions,
+			4,
+			MPI_INT,
+			0,
+			cartesian_grid_communicator
+			);
 	
-	if(rank == 0) {
-		int i;
-		for(i = 1; i < size; i++){
-			MPI_Send(matrices_a_b_dimensions, 4, MPI_INT, i, 0, cartesian_grid_communicator);
-		}
-	} else {
-		MPI_Recv(matrices_a_b_dimensions, 4, MPI_INT, 0, 0, cartesian_grid_communicator, &status);
-	}
 
 	A_rows = matrices_a_b_dimensions[0];
 	A_columns = matrices_a_b_dimensions[1];
@@ -215,19 +213,15 @@ int main (int argc, char **argv) {
 	}
 
 	// get C parts from other processes at rank 0
-	if(rank == 0) {
-		for(i = 0; i < A_local_block_rows * B_local_block_columns; i++){
-			C_array[i] = C_local_block[i];
-		}
-		int i;
-		for(i = 1; i < size; i++){
-			MPI_Recv(C_array + (i * A_local_block_rows * B_local_block_columns), A_local_block_rows * B_local_block_columns, 
-				MPI_DOUBLE, i, 0, cartesian_grid_communicator, &status);
-		}
-	} else {
-		MPI_Send(C_local_block, A_local_block_rows * B_local_block_columns, MPI_DOUBLE, 0, 0, cartesian_grid_communicator);
-	}
-
+	MPI_Gather(
+			C_local_block,
+			A_local_block_rows * B_local_block_columns,
+			MPI_DOUBLE,
+			C_array,
+			A_local_block_rows * B_local_block_columns,
+			MPI_DOUBLE,
+			0,
+			cartesian_grid_communicator);
 	// generating output at rank 0
 	if (rank == 0) {
 		// convert the ID array into the actual C matrix 

@@ -1,3 +1,17 @@
+# Ignore all
+*
+
+# Unignore all directories
+!*/
+
+# Unignore all files with extensions
+!*.*
+
+# Ignore scorep output directories
+
+**/cannon_src/*
+
+*.out
 *.o
 *.pyc
 *.swp

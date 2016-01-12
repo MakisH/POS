@@ -2,8 +2,8 @@
 VERSION=collectives
 #VERSION=io
 
-#CC=mpicc
-CC=scorep mpicc
+CC=mpicc
+#CC=scorep mpicc
 
 SRC_TEST=cannon_$(VERSION)
 
