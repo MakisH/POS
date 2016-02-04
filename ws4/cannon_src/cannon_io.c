@@ -4,9 +4,8 @@
 #include <string.h>
 #include "mpi.h"
 
-#define convert2bin
+// #define convert2bin
 
-#ifdef convert2bin
 char* strConc(char *strA, char *strB)
 {
     char *concatenated = malloc(strlen(strA)+strlen(strB)+1);
@@ -14,15 +13,13 @@ char* strConc(char *strA, char *strB)
     strcat(concatenated, strB);
     return concatenated;
 }
-#endif
 
 int main (int argc, char **argv) {
 	FILE *fp;
-	double **A = NULL, **B = NULL, **C = NULL, *A_array = NULL, *B_array = NULL, *C_array = NULL;
 	double *A_local_block = NULL, *B_local_block = NULL, *C_local_block = NULL;
 	int A_rows, A_columns, A_local_block_rows, A_local_block_columns, A_local_block_size;
 	int B_rows, B_columns, B_local_block_rows, B_local_block_columns, B_local_block_size;
-	int rank, size, sqrt_size, matrices_a_b_dimensions[4];
+	int rank, size, sqrt_size, matrices_a_b_dimensions[4], i;
 	MPI_Comm cartesian_grid_communicator, row_communicator, column_communicator;
 	MPI_Status status;
 	double init_time = 0, start;
@@ -69,6 +66,8 @@ int main (int argc, char **argv) {
 	// binary files directly from the source (e.g. checkpointing) or use a more
 	// sophisticated conversion approach.
 	#ifdef convert2bin
+	double **A = NULL, **B = NULL, **C = NULL, *A_array = NULL, *B_array = NULL, *C_array = NULL;
+
 	// getting matrices from files at rank 0 only
 	// example: mpiexec -n 64 ./cannon matrix1 matrix2 [test]
 	if (rank == 0){
@@ -127,7 +126,6 @@ int main (int argc, char **argv) {
 
 	// send dimensions to all peers
 	if(rank == 0) {
-		int i;
 		for(i = 1; i < size; i++){
 			MPI_Send(matrices_a_b_dimensions, 4, MPI_INT, i, 0, cartesian_grid_communicator);
 		}
@@ -155,7 +153,6 @@ int main (int argc, char **argv) {
 	// local metadata for C
 	C_local_block = (double *) malloc (A_local_block_rows * B_local_block_columns * sizeof(double));
 	// C needs to be initialized at 0 (accumulates partial dot-products)
-	int i;
 	for(i=0; i < A_local_block_rows * B_local_block_columns; i++){
 		C_local_block[i] = 0;
 	}
@@ -192,7 +189,6 @@ int main (int argc, char **argv) {
 
 	// send a block to each process
 	if(rank == 0) {
-		int i;
 		for(i = 1; i < size; i++){
 			MPI_Send((A_array + (i * A_local_block_size)), A_local_block_size, MPI_DOUBLE, i, 0, cartesian_grid_communicator);
 			MPI_Send((B_array + (i * B_local_block_size)), B_local_block_size, MPI_DOUBLE, i, 0, cartesian_grid_communicator);
@@ -277,13 +273,104 @@ int main (int argc, char **argv) {
 	MPI_File_set_view(fhB, disp_header, MPI_DOUBLE, subarrayB, "native", MPI_INFO_NULL);
 
 	// Write the body of the B-file
-	MPI_File_write_all(fhB, A_local_block, A_local_block_size, MPI_DOUBLE, MPI_STATUS_IGNORE);
+	MPI_File_write_all(fhB, B_local_block, B_local_block_size, MPI_DOUBLE, MPI_STATUS_IGNORE);
 
 	// Close the B-file
 	MPI_File_close(&fhB);
 
 	#endif
 	//---------------------- End of the binary converter -------------------------
+
+
+	//---------------------- Read the (binary) input data ------------------------
+	#ifndef convert2bin
+
+	MPI_File fhA, fhB;
+	char* filenameA = argv[1];
+	char* filenameB = argv[2];
+
+	// Open the A-file
+	MPI_File_open(MPI_COMM_WORLD, filenameA, MPI_MODE_RDONLY, MPI_INFO_NULL, &fhA);
+
+	// Read the header of the A-file
+	MPI_File_read(fhA, &matrices_a_b_dimensions[0], 1, MPI_INT, MPI_STATUS_IGNORE);
+	MPI_File_read(fhA, &matrices_a_b_dimensions[1], 1, MPI_INT, MPI_STATUS_IGNORE);
+	MPI_Offset disp_header = 2*sizeof(int);
+
+	// Compute the necessary sizes from the header information
+	A_rows = matrices_a_b_dimensions[0];
+	A_columns = matrices_a_b_dimensions[1];
+	A_local_block_rows = A_rows / sqrt_size;
+	A_local_block_columns = A_columns / sqrt_size;
+	A_local_block_size = A_local_block_rows * A_local_block_columns;
+	A_local_block = (double *) malloc (A_local_block_size * sizeof(double));
+
+	// Set the parameters for the 1D subarray for A
+	int sizes[1];
+	sizes[0] = matrices_a_b_dimensions[0] * matrices_a_b_dimensions[1];
+
+	int subsizes[1];
+	subsizes[0] = A_local_block_size;
+
+	int starts[1];
+	starts[0] = rank * subsizes[0];
+
+	// Create and commit the 1D subarray for A
+	MPI_Datatype subarrayA;
+	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayA);
+	MPI_Type_commit(&subarrayA);
+
+	// Set the file view for A
+	MPI_File_set_view(fhA, disp_header, MPI_DOUBLE, subarrayA, "native", MPI_INFO_NULL);
+	// Read the body of the A-file
+	MPI_File_read_all(fhA, A_local_block, A_local_block_size, MPI_DOUBLE, MPI_STATUS_IGNORE);
+
+	// Close the A-file
+	MPI_File_close(&fhA);
+	//--------------------------
+	// Open the B-file
+	MPI_File_open(MPI_COMM_WORLD, filenameB, MPI_MODE_RDONLY, MPI_INFO_NULL, &fhB);
+
+	// Read the header of the B-file
+	MPI_File_read(fhB, &matrices_a_b_dimensions[2], 1, MPI_INT, MPI_STATUS_IGNORE);
+	MPI_File_read(fhB, &matrices_a_b_dimensions[3], 1, MPI_INT, MPI_STATUS_IGNORE);
+	// (the same displacement as for A applies here)
+
+	// Compute the necessary sizes from the header information
+	B_rows = matrices_a_b_dimensions[2];
+	B_columns = matrices_a_b_dimensions[3];
+	B_local_block_rows = B_rows / sqrt_size;
+	B_local_block_columns = B_columns / sqrt_size;
+	B_local_block_size = B_local_block_rows * B_local_block_columns;
+	B_local_block = (double *) malloc (B_local_block_size * sizeof(double));
+
+	// Set the parameters for the 1D subarray for B
+	sizes[0] = matrices_a_b_dimensions[2] * matrices_a_b_dimensions[3];
+	subsizes[0] = B_local_block_size;
+	starts[0] = rank * subsizes[0];
+
+	// Create and commit the 1D subarray for B
+	MPI_Datatype subarrayB;
+	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayB);
+	MPI_Type_commit(&subarrayB);
+
+	// Set the file view for B
+	MPI_File_set_view(fhB, disp_header, MPI_DOUBLE, subarrayB, "native", MPI_INFO_NULL);
+	// Read the body of the B-file
+	MPI_File_read_all(fhB, B_local_block, B_local_block_size, MPI_DOUBLE, MPI_STATUS_IGNORE);
+	// Close the B-file
+	MPI_File_close(&fhB);
+
+	//--------------------------
+	// local metadata for C
+	C_local_block = (double *) malloc (A_local_block_rows * B_local_block_columns * sizeof(double));
+	// C needs to be initialized at 0 (accumulates partial dot-products)
+	for(i=0; i < A_local_block_rows * B_local_block_columns; i++){
+		C_local_block[i] = 0;
+	}
+
+	#endif
+	//------------------ End of reading the binary input -------------------------
 
 	init_time = MPI_Wtime() - start;
 
@@ -327,23 +414,22 @@ int main (int argc, char **argv) {
 		mpi_time += MPI_Wtime() - start;
 	}
 
-	// get C parts from other processes at rank 0
+	/*// get C parts from other processes at rank 0
 	if(rank == 0) {
 		for(i = 0; i < A_local_block_rows * B_local_block_columns; i++){
 			C_array[i] = C_local_block[i];
 		}
-		int i;
 		for(i = 1; i < size; i++){
 			MPI_Recv(C_array + (i * A_local_block_rows * B_local_block_columns), A_local_block_rows * B_local_block_columns,
 				MPI_DOUBLE, i, 0, cartesian_grid_communicator, &status);
 		}
 	} else {
 		MPI_Send(C_local_block, A_local_block_rows * B_local_block_columns, MPI_DOUBLE, 0, 0, cartesian_grid_communicator);
-	}
+	}*/
 
 	// generating output at rank 0
 	if (rank == 0) {
-		// convert the ID array into the actual C matrix
+	/*	// convert the ID array into the actual C matrix
 		int i, j, k, row, column;
 		for (i = 0; i < sqrt_size; i++){  // block row index
 			for (j = 0; j < sqrt_size; j++){ // block column index
@@ -355,14 +441,14 @@ int main (int argc, char **argv) {
 					}
 				}
 			}
-		}
+		} */
 
 		printf("(%d,%d)x(%d,%d)=(%d,%d)\n", A_rows, A_columns, B_rows, B_columns, A_rows, B_columns);
 		printf("Init time:        %lf\n", init_time);
 		printf("Computation time: %lf\n", compute_time);
 		printf("MPI time:         %lf\n", mpi_time);
 
-		if (argc == 4){
+	/*	if (argc == 4){
 			// present results on the screen
 			printf("\nA( %d x %d ):\n", A_rows, A_columns);
 			for(row = 0; row < A_rows; row++) {
@@ -403,12 +489,12 @@ int main (int argc, char **argv) {
 			}
 			if (pass) printf("Consistency check: PASS\n");
 			else printf("Consistency check: FAIL\n");
-		}
+		} */
 	}
 
 	// free all memory
+	#ifdef convert2bin
 	if(rank == 0){
-		int i;
 		for(i = 0; i < A_rows; i++){
 			free(A[i]);
 		}
@@ -425,6 +511,7 @@ int main (int argc, char **argv) {
 		free(B_array);
 		free(C_array);
 	}
+	#endif
 	free(A_local_block);
 	free(B_local_block);
 	free(C_local_block);
