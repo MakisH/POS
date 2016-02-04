@@ -4,6 +4,18 @@
 #include <string.h>
 #include "mpi.h"
 
+#define convert2bin
+
+#ifdef convert2bin
+char* strConc(char *strA, char *strB)
+{
+    char *concatenated = malloc(strlen(strA)+strlen(strB)+1);
+    strcpy(concatenated, strA);
+    strcat(concatenated, strB);
+    return concatenated;
+}
+#endif
+
 int main (int argc, char **argv) {
 	FILE *fp;
 	double **A = NULL, **B = NULL, **C = NULL, *A_array = NULL, *B_array = NULL, *C_array = NULL;
@@ -13,12 +25,16 @@ int main (int argc, char **argv) {
 	int rank, size, sqrt_size, matrices_a_b_dimensions[4];
 	MPI_Comm cartesian_grid_communicator, row_communicator, column_communicator;
 	MPI_Status status;
-	double input_time = 0, start;
+	double init_time = 0, start;
 
 	// used to manage the cartesian grid
 	int dimensions[2], periods[2], coordinates[2], remain_dims[2];
 
 	MPI_Init(&argc, &argv);
+
+	// NOTE: CHANGE THIS!!!
+	start = MPI_Wtime();
+
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -45,11 +61,17 @@ int main (int argc, char **argv) {
 	remain_dims[1] = 0;
 	MPI_Cart_sub(cartesian_grid_communicator, remain_dims, &column_communicator);
 
+	//------------ Convert the text input files to binary ------------------------
+	// We follow the Worksheet 3 concept of reading centrally and distributing
+	// only once in order to convert the given files to binaries. This technique
+	// of course is not scalable, but we need a way to get binary files in order
+	// to work with MPI I/O. In a real-life scenario we would probably produce
+	// binary files directly from the source (e.g. checkpointing) or use a more
+	// sophisticated conversion approach.
+	#ifdef convert2bin
 	// getting matrices from files at rank 0 only
 	// example: mpiexec -n 64 ./cannon matrix1 matrix2 [test]
 	if (rank == 0){
-
-		start = MPI_Wtime();
 
 		int row, column;
 		if ((fp = fopen (argv[1], "r")) != NULL){
@@ -101,9 +123,6 @@ int main (int argc, char **argv) {
 					matrices_a_b_dimensions[2],matrices_a_b_dimensions[3], sqrt_size );
 			MPI_Abort(MPI_COMM_WORLD, -1);
 		}
-
-		input_time = MPI_Wtime();
-
 	}
 
 	// send dimensions to all peers
@@ -189,6 +208,97 @@ int main (int argc, char **argv) {
 		MPI_Recv(B_local_block, B_local_block_size, MPI_DOUBLE, 0, 0, cartesian_grid_communicator, &status);
 	}
 
+
+	// Convert the provided text files to binary
+
+	// Set the filenames for the binary files
+	char* filenameA = strConc(argv[1], "_bin");
+	char* filenameB = strConc(argv[2], "_bin");
+	// printf("FilenameA = %s\n", filenameA);
+	// printf("FilenameB = %s\n", filenameB);
+	MPI_File fhA, fhB;
+
+	// Open the A-file
+	MPI_File_open(MPI_COMM_WORLD, filenameA, MPI_MODE_CREATE|MPI_MODE_WRONLY, MPI_INFO_NULL, &fhA);
+
+	// Write the header of the A-file
+	if (rank == 0) {
+		MPI_File_write(fhA, &matrices_a_b_dimensions[0], 1, MPI_INT, MPI_STATUS_IGNORE);
+		MPI_File_write(fhA, &matrices_a_b_dimensions[1], 1, MPI_INT, MPI_STATUS_IGNORE);
+	}
+	MPI_Offset disp_header = 2*sizeof(int);
+
+	// Set the parameters for the 1D subarray for A
+	int sizes[1];
+	sizes[0] = matrices_a_b_dimensions[0] * matrices_a_b_dimensions[1];
+
+	int subsizes[1];
+	subsizes[0] = A_local_block_size;
+
+	int starts[1];
+	starts[0] = rank * subsizes[0];
+
+	// Create and commit the 1D subarray for A
+	MPI_Datatype subarrayA;
+	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayA);
+	MPI_Type_commit(&subarrayA);
+
+	// Set the file view for A
+	MPI_File_set_view(fhA, disp_header, MPI_DOUBLE, subarrayA, "native", MPI_INFO_NULL);
+
+	// Write the body of the A-file
+	MPI_File_write_all(fhA, A_local_block, A_local_block_size, MPI_DOUBLE, MPI_STATUS_IGNORE);
+
+	// Close the A-file
+	MPI_File_close(&fhA);
+
+	//--------------------------
+	// Open the B-file
+	MPI_File_open(MPI_COMM_WORLD, filenameB, MPI_MODE_CREATE|MPI_MODE_WRONLY, MPI_INFO_NULL, &fhB);
+
+	// Write the header of the B-file
+	if (rank == 0) {
+		MPI_File_write(fhB, &matrices_a_b_dimensions[0], 1, MPI_INT, MPI_STATUS_IGNORE);
+		MPI_File_write(fhB, &matrices_a_b_dimensions[1], 1, MPI_INT, MPI_STATUS_IGNORE);
+	}
+	// (the same displacement as for A applies here)
+
+	// Set the parameters for the 1D subarray for B
+	sizes[0] = matrices_a_b_dimensions[2] * matrices_a_b_dimensions[3];
+	subsizes[0] = B_local_block_size;
+	starts[0] = rank * subsizes[0];
+
+	// Create and commit the 1D subarray for B
+	MPI_Datatype subarrayB;
+	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayB);
+	MPI_Type_commit(&subarrayB);
+
+	// Set the file view for B
+	MPI_File_set_view(fhB, disp_header, MPI_DOUBLE, subarrayB, "native", MPI_INFO_NULL);
+
+	// Write the body of the B-file
+	MPI_File_write_all(fhB, A_local_block, A_local_block_size, MPI_DOUBLE, MPI_STATUS_IGNORE);
+
+	// Close the B-file
+	MPI_File_close(&fhB);
+
+	#endif
+	//---------------------- End of the binary converter -------------------------
+
+	init_time = MPI_Wtime() - start;
+
+	// fix initial arrangements before the core algorithm starts
+	if(coordinates[0] != 0){
+		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE,
+				(coordinates[1] + sqrt_size - coordinates[0]) % sqrt_size, 0,
+				(coordinates[1] + coordinates[0]) % sqrt_size, 0, row_communicator, &status);
+	}
+	if(coordinates[1] != 0){
+		MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE,
+				(coordinates[0] + sqrt_size - coordinates[1]) % sqrt_size, 0,
+				(coordinates[0] + coordinates[1]) % sqrt_size, 0, column_communicator, &status);
+	}
+
 	// cannon's algorithm
 	int cannon_block_cycle;
 	double compute_time = 0, mpi_time = 0;
@@ -248,7 +358,7 @@ int main (int argc, char **argv) {
 		}
 
 		printf("(%d,%d)x(%d,%d)=(%d,%d)\n", A_rows, A_columns, B_rows, B_columns, A_rows, B_columns);
-		printf("Input time:       %lf\n", input_time);
+		printf("Init time:        %lf\n", init_time);
 		printf("Computation time: %lf\n", compute_time);
 		printf("MPI time:         %lf\n", mpi_time);
 
