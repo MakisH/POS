@@ -182,6 +182,18 @@ int main (int argc, char **argv) {
 		MPI_Recv(B_local_block, B_local_block_size, MPI_DOUBLE, 0, 0, cartesian_grid_communicator, &status);
 	}
 
+	// fix initial arrangements before the core algorithm starts
+	if(coordinates[0] != 0){
+		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE, 
+				(coordinates[1] + sqrt_size - coordinates[0]) % sqrt_size, 0, 
+				(coordinates[1] + coordinates[0]) % sqrt_size, 0, row_communicator, &status);
+	}
+	if(coordinates[1] != 0){
+		MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE, 
+				(coordinates[0] + sqrt_size - coordinates[1]) % sqrt_size, 0, 
+				(coordinates[0] + coordinates[1]) % sqrt_size, 0, column_communicator, &status);
+	}
+
 	// cannon's algorithm
 	int cannon_block_cycle;
 	double compute_time = 0, mpi_time = 0, start;
