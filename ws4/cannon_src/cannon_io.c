@@ -414,6 +414,53 @@ int main (int argc, char **argv) {
 		mpi_time += MPI_Wtime() - start;
 	}
 
+	//----------------- Output the C_local_block to a common file ----------------
+	#ifndef convert2bin
+
+
+	if (rank == 1) {
+		for (i = 0; i < A_local_block_rows * B_local_block_columns; i++) {
+			printf("C[%d] = %f \n", i, C_local_block[i]);
+		}
+	}
+
+	MPI_File fhC;
+	char size_comb[256];
+	sprintf(size_comb, "%dx%d", A_rows, B_columns);
+	char* filenameC = strConc("C_", size_comb);
+	if (rank == 0) {
+		printf("filenameC = %s\n", filenameC);
+	}
+
+	// Open the C-file
+	MPI_File_open(MPI_COMM_WORLD, filenameC, MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &fhC);
+
+	// Write the header of the C-file
+	MPI_File_write(fhC, &A_rows,    1, MPI_INT, MPI_STATUS_IGNORE);
+	MPI_File_write(fhC, &B_columns, 1, MPI_INT, MPI_STATUS_IGNORE);
+	disp_header = 2*sizeof(int);
+
+	// Set the parameters for the 1D subarray for C
+	sizes[0] = A_rows * B_columns;
+	subsizes[0] = A_local_block_rows * B_local_block_columns;
+	starts[0] = rank * subsizes[0];
+
+	// Create and commit the 1D subarray for C
+	MPI_Datatype subarrayC;
+	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayC);
+	MPI_Type_commit(&subarrayC);
+
+	// Set the file view for C
+	MPI_File_set_view(fhC, disp_header, MPI_DOUBLE, subarrayC, "native", MPI_INFO_NULL);
+	// Write the body of the C-file
+	MPI_File_write_all(fhC, C_local_block, subsizes[0], MPI_DOUBLE, MPI_STATUS_IGNORE);
+
+	// Close the C-file
+	MPI_File_close(&fhC);
+
+	#endif
+	//------------------- End of the C output ------------------------------------
+
 	/*// get C parts from other processes at rank 0
 	if(rank == 0) {
 		for(i = 0; i < A_local_block_rows * B_local_block_columns; i++){
