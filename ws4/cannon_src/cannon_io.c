@@ -22,16 +22,12 @@ int main (int argc, char **argv) {
 	int rank, size, sqrt_size, matrices_a_b_dimensions[4], i;
 	MPI_Comm cartesian_grid_communicator, row_communicator, column_communicator;
 	MPI_Status status;
-	double init_time = 0, start;
+	double input_time = 0, output_time = 0, start;
 
 	// used to manage the cartesian grid
 	int dimensions[2], periods[2], coordinates[2], remain_dims[2];
 
 	MPI_Init(&argc, &argv);
-
-	// NOTE: CHANGE THIS!!!
-	start = MPI_Wtime();
-
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -284,6 +280,7 @@ int main (int argc, char **argv) {
 
 	//---------------------- Read the (binary) input data ------------------------
 	#ifndef convert2bin
+	start = MPI_Wtime();
 
 	MPI_File fhA, fhB;
 	char* filenameA = argv[1];
@@ -369,11 +366,11 @@ int main (int argc, char **argv) {
 		C_local_block[i] = 0;
 	}
 
+	input_time = MPI_Wtime() - start;
 	#endif
 	//------------------ End of reading the binary input -------------------------
 
-	init_time = MPI_Wtime() - start;
-
+	#ifndef convert2bin
 	// fix initial arrangements before the core algorithm starts
 	if(coordinates[0] != 0){
 		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE,
@@ -415,21 +412,14 @@ int main (int argc, char **argv) {
 	}
 
 	//----------------- Output the C_local_block to a common file ----------------
-	#ifndef convert2bin
-
-
-	if (rank == 1) {
-		for (i = 0; i < A_local_block_rows * B_local_block_columns; i++) {
-			printf("C[%d] = %f \n", i, C_local_block[i]);
-		}
-	}
+	start = MPI_Wtime();
 
 	MPI_File fhC;
 	char size_comb[256];
 	sprintf(size_comb, "%dx%d", A_rows, B_columns);
 	char* filenameC = strConc("C_", size_comb);
 	if (rank == 0) {
-		printf("filenameC = %s\n", filenameC);
+		printf("C output file: %s\n", filenameC);
 	}
 
 	// Open the C-file
@@ -441,103 +431,47 @@ int main (int argc, char **argv) {
 	disp_header = 2*sizeof(int);
 
 	// Set the parameters for the 1D subarray for C
-	sizes[0] = A_rows * B_columns;
-	subsizes[0] = A_local_block_rows * B_local_block_columns;
-	starts[0] = rank * subsizes[0];
+	int sizesC[2];
+	sizesC[0] = A_rows;
+	sizesC[1] = B_columns;
+
+	int subsizesC[2];
+	subsizesC[0] = A_local_block_rows;
+	subsizesC[1] = B_local_block_columns;
+	int C_local_block_size = A_local_block_rows * B_local_block_columns;
+
+	int startsC[2];
+	startsC[0] = coordinates[0] * subsizesC[0];
+	startsC[1] = coordinates[1] * subsizesC[1];
 
 	// Create and commit the 1D subarray for C
 	MPI_Datatype subarrayC;
-	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayC);
+	MPI_Type_create_subarray(2, sizesC, subsizesC, startsC, MPI_ORDER_C, MPI_DOUBLE, &subarrayC);
 	MPI_Type_commit(&subarrayC);
 
 	// Set the file view for C
 	MPI_File_set_view(fhC, disp_header, MPI_DOUBLE, subarrayC, "native", MPI_INFO_NULL);
 	// Write the body of the C-file
-	MPI_File_write_all(fhC, C_local_block, subsizes[0], MPI_DOUBLE, MPI_STATUS_IGNORE);
+	MPI_File_write_all(fhC, C_local_block, C_local_block_size, MPI_DOUBLE, MPI_STATUS_IGNORE);
 
 	// Close the C-file
 	MPI_File_close(&fhC);
 
-	#endif
+	output_time = MPI_Wtime() - start;
 	//------------------- End of the C output ------------------------------------
-
-	/*// get C parts from other processes at rank 0
-	if(rank == 0) {
-		for(i = 0; i < A_local_block_rows * B_local_block_columns; i++){
-			C_array[i] = C_local_block[i];
-		}
-		for(i = 1; i < size; i++){
-			MPI_Recv(C_array + (i * A_local_block_rows * B_local_block_columns), A_local_block_rows * B_local_block_columns,
-				MPI_DOUBLE, i, 0, cartesian_grid_communicator, &status);
-		}
-	} else {
-		MPI_Send(C_local_block, A_local_block_rows * B_local_block_columns, MPI_DOUBLE, 0, 0, cartesian_grid_communicator);
-	}*/
 
 	// generating output at rank 0
 	if (rank == 0) {
-	/*	// convert the ID array into the actual C matrix
-		int i, j, k, row, column;
-		for (i = 0; i < sqrt_size; i++){  // block row index
-			for (j = 0; j < sqrt_size; j++){ // block column index
-				for (row = 0; row < A_local_block_rows; row++){
-					for (column = 0; column < B_local_block_columns; column++){
-						C[i * A_local_block_rows + row] [j * B_local_block_columns + column] =
-							C_array[((i * sqrt_size + j) * A_local_block_rows * B_local_block_columns)
-							+ (row * B_local_block_columns) + column];
-					}
-				}
-			}
-		} */
 
 		printf("(%d,%d)x(%d,%d)=(%d,%d)\n", A_rows, A_columns, B_rows, B_columns, A_rows, B_columns);
-		printf("Init time:        %lf\n", init_time);
+		printf("Input time:       %lf\n", input_time);
 		printf("Computation time: %lf\n", compute_time);
 		printf("MPI time:         %lf\n", mpi_time);
+		printf("Output time:      %lf\n", output_time);
 
-	/*	if (argc == 4){
-			// present results on the screen
-			printf("\nA( %d x %d ):\n", A_rows, A_columns);
-			for(row = 0; row < A_rows; row++) {
-				for(column = 0; column < A_columns; column++)
-					printf ("%7.3f ", A[row][column]);
-				printf ("\n");
-			}
-			printf("\nB( %d x %d ):\n", B_rows, B_columns);
-			for(row = 0; row < B_rows; row++){
-				for(column = 0; column < B_columns; column++)
-					printf("%7.3f ", B[row][column]);
-				printf("\n");
-			}
-			printf("\nC( %d x %d ) = AxB:\n", A_rows, B_columns);
-			for(row = 0; row < A_rows; row++){
-				for(column = 0; column < B_columns; column++)
-					printf("%7.3f ",C[row][column]);
-				printf("\n");
-			}
-
-
-			printf("\nPerforming serial consistency check. Be patient...\n");
-			fflush(stdout);
-			int pass = 1;
-			double temp;
-			for(i=0; i<A_rows; i++){
-				for(j=0; j<B_columns; j++){
-					temp = 0;
-					for(k=0; k<B_rows; k++){
-						temp += A[i][k] * B[k][j];
-					}
-					printf("%7.3f ", temp);
-					if(temp != C[i][j]){
-						pass = 0;
-					}
-				}
-				printf("\n");
-			}
-			if (pass) printf("Consistency check: PASS\n");
-			else printf("Consistency check: FAIL\n");
-		} */
 	}
+
+	#endif
 
 	// free all memory
 	#ifdef convert2bin
