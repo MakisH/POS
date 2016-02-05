@@ -4,6 +4,14 @@
 #include <string.h>
 #include "mpi.h"
 
+char* strConc(char *strA, char *strB)
+{
+    char *concatenated = malloc(strlen(strA)+strlen(strB)+1);
+    strcpy(concatenated, strA);
+    strcat(concatenated, strB);
+    return concatenated;
+}
+
 int main (int argc, char **argv) {
 	FILE *fp;
 	double **A = NULL, **B = NULL, **C = NULL, *A_array = NULL, *B_array = NULL, *C_array = NULL;
@@ -12,7 +20,8 @@ int main (int argc, char **argv) {
 	int B_rows, B_columns, B_local_block_rows, B_local_block_columns, B_local_block_size;
 	int rank, size, sqrt_size, matrices_a_b_dimensions[4];
 	MPI_Comm cartesian_grid_communicator, row_communicator, column_communicator;
-	MPI_Status status; 
+	MPI_Status status;
+	double input_time = 0, output_time = 0, start;
 
 	// used to manage the cartesian grid
 	int dimensions[2], periods[2], coordinates[2], remain_dims[2];
@@ -22,21 +31,21 @@ int main (int argc, char **argv) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
 	/* For square mesh */
-	sqrt_size = (int)sqrt((double) size);             
+	sqrt_size = (int)sqrt((double) size);
 	if(sqrt_size * sqrt_size != size){
 		if( rank == 0 ) perror("need to run mpiexec with a perfect square number of processes\n");
 		MPI_Abort(MPI_COMM_WORLD, -1);
 	}
 
-	// create a 2D cartesian grid 
+	// create a 2D cartesian grid
 	dimensions[0] = dimensions[1] = sqrt_size;
-	periods[0] = periods[1] = 1;    
+	periods[0] = periods[1] = 1;
 	MPI_Cart_create(MPI_COMM_WORLD, 2, dimensions, periods, 1, &cartesian_grid_communicator);
 	MPI_Cart_coords(cartesian_grid_communicator, rank, 2, coordinates);
 
 	// create a row communicator
-	remain_dims[0] = 0;            
-	remain_dims[1] = 1; 
+	remain_dims[0] = 0;
+	remain_dims[1] = 1;
 	MPI_Cart_sub(cartesian_grid_communicator, remain_dims, &row_communicator);
 
 	// create a column communicator
@@ -44,6 +53,7 @@ int main (int argc, char **argv) {
 	remain_dims[1] = 0;
 	MPI_Cart_sub(cartesian_grid_communicator, remain_dims, &column_communicator);
 
+	start = MPI_Wtime();
 	// getting matrices from files at rank 0 only
 	// example: mpiexec -n 64 ./cannon matrix1 matrix2 [test]
 	if (rank == 0){
@@ -75,21 +85,21 @@ int main (int argc, char **argv) {
 			MPI_Abort(MPI_COMM_WORLD, -1);
 		}
 
-		// need to check that the multiplication is possible given dimensions 
+		// need to check that the multiplication is possible given dimensions
 		// matrices_a_b_dimensions[0] = row size of A
 		// matrices_a_b_dimensions[1] = column size of A
 		// matrices_a_b_dimensions[2] = row size of B
 		// matrices_a_b_dimensions[3] = column size of B
 		if(matrices_a_b_dimensions[1] != matrices_a_b_dimensions[2]){
-			if(rank == 0) fprintf(stderr, "A's column size (%d) must match B's row size (%d)\n", 
+			if(rank == 0) fprintf(stderr, "A's column size (%d) must match B's row size (%d)\n",
 					matrices_a_b_dimensions[1], matrices_a_b_dimensions[2]);
 			MPI_Abort(MPI_COMM_WORLD, -1);
 		}
 
 		// this implementation is limited to cases where thematrices can be partitioned perfectly
-		if( matrices_a_b_dimensions[0] % sqrt_size != 0 
-				|| matrices_a_b_dimensions[1] % sqrt_size != 0 
-				|| matrices_a_b_dimensions[2] % sqrt_size != 0 
+		if( matrices_a_b_dimensions[0] % sqrt_size != 0
+				|| matrices_a_b_dimensions[1] % sqrt_size != 0
+				|| matrices_a_b_dimensions[2] % sqrt_size != 0
 				|| matrices_a_b_dimensions[3] % sqrt_size != 0 ){
 			if(rank == 0) fprintf(stderr, "cannot distribute work evenly among processe\n"
 					"all dimensions (A: r:%d c:%d; B: r:%d c:%d) need to be divisible by %d\n",
@@ -145,13 +155,13 @@ int main (int argc, char **argv) {
 			for (j = 0; j < sqrt_size; j++){
 				for (row = 0; row < A_local_block_rows; row++){
 					for (column = 0; column < A_local_block_columns; column++){
-						A_array[((i * sqrt_size + j) * A_local_block_size) + (row * A_local_block_columns) + column] 
+						A_array[((i * sqrt_size + j) * A_local_block_size) + (row * A_local_block_columns) + column]
 							= A[i * A_local_block_rows + row][j * A_local_block_columns + column];
 					}
 				}
 				for (row = 0; row < B_local_block_rows; row++){
 					for (column = 0; column < B_local_block_columns; column++){
-						B_array[((i * sqrt_size + j) * B_local_block_size) + (row * B_local_block_columns) + column] 
+						B_array[((i * sqrt_size + j) * B_local_block_size) + (row * B_local_block_columns) + column]
 							= B[i * B_local_block_rows + row][j * B_local_block_columns + column];
 					}
 				}
@@ -162,7 +172,7 @@ int main (int argc, char **argv) {
 		for(i=0; i<A_rows ;i++){
 			C[i] = (double *) malloc(B_columns * sizeof(double));
 		}
-	} 
+	}
 
 	// send a block to each process
 	if(rank == 0) {
@@ -182,21 +192,23 @@ int main (int argc, char **argv) {
 		MPI_Recv(B_local_block, B_local_block_size, MPI_DOUBLE, 0, 0, cartesian_grid_communicator, &status);
 	}
 
+	input_time = MPI_Wtime() - start;
+
 	// fix initial arrangements before the core algorithm starts
 	if(coordinates[0] != 0){
-		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE, 
-				(coordinates[1] + sqrt_size - coordinates[0]) % sqrt_size, 0, 
+		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE,
+				(coordinates[1] + sqrt_size - coordinates[0]) % sqrt_size, 0,
 				(coordinates[1] + coordinates[0]) % sqrt_size, 0, row_communicator, &status);
 	}
 	if(coordinates[1] != 0){
-		MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE, 
-				(coordinates[0] + sqrt_size - coordinates[1]) % sqrt_size, 0, 
+		MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE,
+				(coordinates[0] + sqrt_size - coordinates[1]) % sqrt_size, 0,
 				(coordinates[0] + coordinates[1]) % sqrt_size, 0, column_communicator, &status);
 	}
 
 	// cannon's algorithm
 	int cannon_block_cycle;
-	double compute_time = 0, mpi_time = 0, start;
+	double compute_time = 0, mpi_time = 0;
 	int C_index, A_row, A_column, B_column;
 	for(cannon_block_cycle = 0; cannon_block_cycle < sqrt_size; cannon_block_cycle++){
 		// compute partial result for this block cycle
@@ -212,24 +224,25 @@ int main (int argc, char **argv) {
 		compute_time += MPI_Wtime() - start;
 		start = MPI_Wtime();
 		// rotate blocks horizontally
-		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE, 
-				(coordinates[1] + sqrt_size - 1) % sqrt_size, 0, 
+		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE,
+				(coordinates[1] + sqrt_size - 1) % sqrt_size, 0,
 				(coordinates[1] + 1) % sqrt_size, 0, row_communicator, &status);
 		// rotate blocks vertically
-		MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE, 
-				(coordinates[0] + sqrt_size - 1) % sqrt_size, 0, 
+		MPI_Sendrecv_replace(B_local_block, B_local_block_size, MPI_DOUBLE,
+				(coordinates[0] + sqrt_size - 1) % sqrt_size, 0,
 				(coordinates[0] + 1) % sqrt_size, 0, column_communicator, &status);
 		mpi_time += MPI_Wtime() - start;
 	}
 
 	// get C parts from other processes at rank 0
 	if(rank == 0) {
+		start = MPI_Wtime();
 		for(i = 0; i < A_local_block_rows * B_local_block_columns; i++){
 			C_array[i] = C_local_block[i];
 		}
 		int i;
 		for(i = 1; i < size; i++){
-			MPI_Recv(C_array + (i * A_local_block_rows * B_local_block_columns), A_local_block_rows * B_local_block_columns, 
+			MPI_Recv(C_array + (i * A_local_block_rows * B_local_block_columns), A_local_block_rows * B_local_block_columns,
 				MPI_DOUBLE, i, 0, cartesian_grid_communicator, &status);
 		}
 	} else {
@@ -238,23 +251,51 @@ int main (int argc, char **argv) {
 
 	// generating output at rank 0
 	if (rank == 0) {
-		// convert the ID array into the actual C matrix 
+		// convert the ID array into the actual C matrix
 		int i, j, k, row, column;
 		for (i = 0; i < sqrt_size; i++){  // block row index
 			for (j = 0; j < sqrt_size; j++){ // block column index
 				for (row = 0; row < A_local_block_rows; row++){
 					for (column = 0; column < B_local_block_columns; column++){
-						C[i * A_local_block_rows + row] [j * B_local_block_columns + column] = 
-							C_array[((i * sqrt_size + j) * A_local_block_rows * B_local_block_columns) 
+						C[i * A_local_block_rows + row] [j * B_local_block_columns + column] =
+							C_array[((i * sqrt_size + j) * A_local_block_rows * B_local_block_columns)
 							+ (row * B_local_block_columns) + column];
 					}
 				}
 			}
 		}
 
+		if (rank == 0) {
+			char size_comb[256];
+			sprintf(size_comb, "%dx%d", A_rows, B_columns);
+			char* filenameC = strConc("C_", size_comb);
+			filenameC = strConc(filenameC, "_serial.txt");
+			if (rank == 0) {
+				printf("C output file: %s\n", filenameC);
+			}
+
+			int row, column;
+			if ((fp = fopen (filenameC, "w")) != NULL) {
+				fprintf(fp, "%d %d\n", A_rows, B_columns);
+				for (row = 0; row < A_rows; row++) {
+					for (column = 0; column < B_columns; column++) {
+						fprintf(fp, "%5.1f ", C[row][column]);
+					}
+					fprintf(fp, "\n");
+				}
+				fclose(fp);
+			} else {
+				if (rank == 0) fprintf(stderr, "error writing file for matrix C (%s)\n", filenameC);
+				MPI_Abort(MPI_COMM_WORLD, -1);
+			}
+		}
+
+		output_time = MPI_Wtime() - start;
 		printf("(%d,%d)x(%d,%d)=(%d,%d)\n", A_rows, A_columns, B_rows, B_columns, A_rows, B_columns);
+		printf("Input time:       %lf\n", input_time);
 		printf("Computation time: %lf\n", compute_time);
 		printf("MPI time:         %lf\n", mpi_time);
+		printf("Output time:      %lf\n", output_time);
 
 		if (argc == 4){
 			// present results on the screen
@@ -297,7 +338,7 @@ int main (int argc, char **argv) {
 			}
 			if (pass) printf("Consistency check: PASS\n");
 			else printf("Consistency check: FAIL\n");
-		}	
+		}
 	}
 
 	// free all memory
@@ -326,4 +367,3 @@ int main (int argc, char **argv) {
 	// finalize MPI
 	MPI_Finalize();
 }
-

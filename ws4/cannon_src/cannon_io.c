@@ -396,10 +396,8 @@ int main (int argc, char **argv) {
 	}
 
 	input_time = MPI_Wtime() - start;
-	#endif
 	//------------------ End of reading the binary input -------------------------
 
-	#ifndef convert2bin
 	// fix initial arrangements before the core algorithm starts
 	if(coordinates[0] != 0){
 		MPI_Sendrecv_replace(A_local_block, A_local_block_size, MPI_DOUBLE,
