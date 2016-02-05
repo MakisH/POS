@@ -62,6 +62,11 @@ int main (int argc, char **argv) {
 	// binary files directly from the source (e.g. checkpointing) or use a more
 	// sophisticated conversion approach.
 	#ifdef convert2bin
+
+	if (rank==0) {
+		printf("Converting the text input files to binary...\n");
+	}
+
 	double **A = NULL, **B = NULL, **C = NULL, *A_array = NULL, *B_array = NULL, *C_array = NULL;
 
 	// getting matrices from files at rank 0 only
@@ -206,8 +211,6 @@ int main (int argc, char **argv) {
 	// Set the filenames for the binary files
 	char* filenameA = strConc(argv[1], "_bin");
 	char* filenameB = strConc(argv[2], "_bin");
-	// printf("FilenameA = %s\n", filenameA);
-	// printf("FilenameB = %s\n", filenameB);
 	MPI_File fhA, fhB;
 
 	// Open the A-file
@@ -215,24 +218,27 @@ int main (int argc, char **argv) {
 
 	// Write the header of the A-file
 	if (rank == 0) {
-		MPI_File_write(fhA, &matrices_a_b_dimensions[0], 1, MPI_INT, MPI_STATUS_IGNORE);
-		MPI_File_write(fhA, &matrices_a_b_dimensions[1], 1, MPI_INT, MPI_STATUS_IGNORE);
+		MPI_File_write(fhA, &A_rows,    1, MPI_INT, MPI_STATUS_IGNORE);
+		MPI_File_write(fhA, &A_columns, 1, MPI_INT, MPI_STATUS_IGNORE);
 	}
 	MPI_Offset disp_header = 2*sizeof(int);
 
-	// Set the parameters for the 1D subarray for A
-	int sizes[1];
-	sizes[0] = matrices_a_b_dimensions[0] * matrices_a_b_dimensions[1];
+	// Set the parameters for the 2D subarray for A
+	int sizesA[2];
+	sizesA[0] = A_rows;
+	sizesA[1] = A_columns;
 
-	int subsizes[1];
-	subsizes[0] = A_local_block_size;
+	int subsizesA[2];
+	subsizesA[0] = A_local_block_rows;
+	subsizesA[1] = A_local_block_columns;
 
-	int starts[1];
-	starts[0] = rank * subsizes[0];
+	int startsA[2];
+	startsA[0] = coordinates[0] * subsizesA[0];
+	startsA[1] = coordinates[1] * subsizesA[1];
 
-	// Create and commit the 1D subarray for A
+	// Create and commit the 2D subarray for A
 	MPI_Datatype subarrayA;
-	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayA);
+	MPI_Type_create_subarray(2, sizesA, subsizesA, startsA, MPI_ORDER_C, MPI_DOUBLE, &subarrayA);
 	MPI_Type_commit(&subarrayA);
 
 	// Set the file view for A
@@ -250,19 +256,27 @@ int main (int argc, char **argv) {
 
 	// Write the header of the B-file
 	if (rank == 0) {
-		MPI_File_write(fhB, &matrices_a_b_dimensions[0], 1, MPI_INT, MPI_STATUS_IGNORE);
-		MPI_File_write(fhB, &matrices_a_b_dimensions[1], 1, MPI_INT, MPI_STATUS_IGNORE);
+		MPI_File_write(fhB, &matrices_a_b_dimensions[2], 1, MPI_INT, MPI_STATUS_IGNORE);
+		MPI_File_write(fhB, &matrices_a_b_dimensions[3], 1, MPI_INT, MPI_STATUS_IGNORE);
 	}
 	// (the same displacement as for A applies here)
 
-	// Set the parameters for the 1D subarray for B
-	sizes[0] = matrices_a_b_dimensions[2] * matrices_a_b_dimensions[3];
-	subsizes[0] = B_local_block_size;
-	starts[0] = rank * subsizes[0];
+	// Set the parameters for the 2D subarray for B
+	int sizesB[2];
+	sizesB[0] = B_rows;
+	sizesB[1] = B_columns;
 
-	// Create and commit the 1D subarray for B
+	int subsizesB[2];
+	subsizesB[0] = B_local_block_rows;
+	subsizesB[1] = B_local_block_columns;
+
+	int startsB[2];
+	startsB[0] = coordinates[0] * subsizesB[0];
+	startsB[1] = coordinates[1] * subsizesB[1];
+
+	// Create and commit the 2D subarray for B
 	MPI_Datatype subarrayB;
-	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayB);
+	MPI_Type_create_subarray(2, sizesB, subsizesB, startsB, MPI_ORDER_C, MPI_DOUBLE, &subarrayB);
 	MPI_Type_commit(&subarrayB);
 
 	// Set the file view for B
@@ -273,6 +287,10 @@ int main (int argc, char **argv) {
 
 	// Close the B-file
 	MPI_File_close(&fhB);
+
+	if (rank == 0) {
+		printf("Conversion complete! New files: %s and %s.\n", filenameA, filenameB);
+	}
 
 	#endif
 	//---------------------- End of the binary converter -------------------------
@@ -302,19 +320,22 @@ int main (int argc, char **argv) {
 	A_local_block_size = A_local_block_rows * A_local_block_columns;
 	A_local_block = (double *) malloc (A_local_block_size * sizeof(double));
 
-	// Set the parameters for the 1D subarray for A
-	int sizes[1];
-	sizes[0] = matrices_a_b_dimensions[0] * matrices_a_b_dimensions[1];
+	// Set the parameters for the 2D subarray for A
+	int sizesA[2];
+	sizesA[0] = A_rows;
+	sizesA[1] = A_columns;
 
-	int subsizes[1];
-	subsizes[0] = A_local_block_size;
+	int subsizesA[2];
+	subsizesA[0] = A_local_block_rows;
+	subsizesA[1] = A_local_block_columns;
 
-	int starts[1];
-	starts[0] = rank * subsizes[0];
+	int startsA[2];
+	startsA[0] = coordinates[0] * subsizesA[0];
+	startsA[1] = coordinates[1] * subsizesA[1];
 
-	// Create and commit the 1D subarray for A
+	// Create and commit the 2D subarray for A
 	MPI_Datatype subarrayA;
-	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayA);
+	MPI_Type_create_subarray(2, sizesA, subsizesA, startsA, MPI_ORDER_C, MPI_DOUBLE, &subarrayA);
 	MPI_Type_commit(&subarrayA);
 
 	// Set the file view for A
@@ -341,14 +362,22 @@ int main (int argc, char **argv) {
 	B_local_block_size = B_local_block_rows * B_local_block_columns;
 	B_local_block = (double *) malloc (B_local_block_size * sizeof(double));
 
-	// Set the parameters for the 1D subarray for B
-	sizes[0] = matrices_a_b_dimensions[2] * matrices_a_b_dimensions[3];
-	subsizes[0] = B_local_block_size;
-	starts[0] = rank * subsizes[0];
+	// Set the parameters for the 2D subarray for B
+	int sizesB[2];
+	sizesB[0] = B_rows;
+	sizesB[1] = B_columns;
 
-	// Create and commit the 1D subarray for B
+	int subsizesB[2];
+	subsizesB[0] = B_local_block_rows;
+	subsizesB[1] = B_local_block_columns;
+
+	int startsB[2];
+	startsB[0] = coordinates[0] * subsizesB[0];
+	startsB[1] = coordinates[1] * subsizesB[1];
+
+	// Create and commit the 2D subarray for B
 	MPI_Datatype subarrayB;
-	MPI_Type_create_subarray(1, sizes, subsizes, starts, MPI_ORDER_C, MPI_DOUBLE, &subarrayB);
+	MPI_Type_create_subarray(2, sizesB, subsizesB, startsB, MPI_ORDER_C, MPI_DOUBLE, &subarrayB);
 	MPI_Type_commit(&subarrayB);
 
 	// Set the file view for B
@@ -426,8 +455,10 @@ int main (int argc, char **argv) {
 	MPI_File_open(MPI_COMM_WORLD, filenameC, MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &fhC);
 
 	// Write the header of the C-file
-	MPI_File_write(fhC, &A_rows,    1, MPI_INT, MPI_STATUS_IGNORE);
-	MPI_File_write(fhC, &B_columns, 1, MPI_INT, MPI_STATUS_IGNORE);
+    if (rank == 0) {
+        MPI_File_write(fhC, &A_rows,    1, MPI_INT, MPI_STATUS_IGNORE);
+        MPI_File_write(fhC, &B_columns, 1, MPI_INT, MPI_STATUS_IGNORE);
+    }
 	disp_header = 2*sizeof(int);
 
 	// Set the parameters for the 1D subarray for C
