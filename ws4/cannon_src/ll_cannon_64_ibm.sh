@@ -2,13 +2,13 @@
 #@ wall_clock_limit = 00:20:00
 #@ job_name = pos-cannon-mpi-ibm
 #@ job_type = Parallel
-#@ output = cannon_collectives_$(jobid).out
-#@ error = cannon_collectives_$(jobid).out
+#@ output = cannon_provided_$(jobid).out
+#@ error = cannon_provided_$(jobid).out
 #@ class = test
 #@ node = 4
 #@ total_tasks = 64
 #@ node_usage = not_shared
-#@ energy_policy_tag = cannon_collectives_sb
+#@ energy_policy_tag = cannon_provided_sb
 #@ minimize_time_to_solution = yes
 #@ notification = never
 #@ island_count = 1
@@ -20,8 +20,8 @@
 # As we have three different versions of the code (provided, collectives, MPI I/O),
 # we can select a version here, for convenience. Valid options: "provided", "collectives", "io".
 # Please update the header of the jobscript respectively.
-#VERSION="provided"
-VERSION="collectives"
+VERSION="provided"
+#VERSION="collectives"
 #VERSION="io"
 
 # As we need to run this in both SuperMUC Phase I and SuperMUC Phase II,
@@ -44,7 +44,7 @@ BINARY="./cannon_${VERSION}_${ARCH}"
 # Note: We need to add the test flag to some runs for testing.
 #	We ommit it when running everything many times, in order to reduce the total job runtime.
 #	To make things simpler, we implemented an option to choose between testing or actual measuring.
-DO_TESTING=true
+DO_TESTING=false
 
 # Repetitions for the normal (non-testing) mode.
 REPETITIONS=30

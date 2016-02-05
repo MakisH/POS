@@ -1,17 +1,19 @@
-#VERSION=provided
-VERSION=collectives
+VERSION=provided
+#VERSION=collectives
 #VERSION=io
 
 ARCH=sb
 #ARCH=hw
 
-#CC=mpicc
-#SCOREP_SUFFIX=
+CC=mpicc
+SCOREP_SUFFIX=
 
-CC=scorep mpicc
-SCOREP_SUFFIX=_scorep
+#CC=scorep mpicc
+#SCOREP_SUFFIX=_scorep
 
 SRC_TEST=cannon_$(VERSION)
+
+CFLAGS=-Wno-unused-result
 
 all:
 	@make cannon

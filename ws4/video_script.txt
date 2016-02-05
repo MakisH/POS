@@ -1,0 +1,75 @@
+Hello!
+
+I am Gerasimos and I will present you our work on this last worksheet about MPI Collectives and Input-Output operations.
+
+-- 
+
+Let's first see were we stoped at the previous worksheet.
+
+The provided implementation of the Cannon's algorithm manages the IO using only one process, that distributes and collects the blocks of A and B usind blocking Point to Point communication.
+
+We extended the code to also write the C in the same way and we tried to fix these problems that,
+
+[-/-]
+
+as you can see here, are quite big.
+
+First we replaced the P2P communication with MPI Collectives. We used the Broadcaste, the Scatter and the Gather functions, in their blocking form, as there wasn't much to overlap.
+
+Only with this change, we had a small performance improvement and much cleaner code! We also expect it to be better scalable.
+
+--
+
+Also the traces look cleaner, as we saw in Vampir.
+
+--
+
+In order to fix the IO overhead and extend the scalability boundaries, we need to put more processes in the reading and writting part, as well as to take care of minimizing the latency of using many files. 
+
+A technique for this, called "data sieving", instructs that a process that needs many parts of a file, a large and contiguous part of data is read and then filtered out. This reduces the latency but still requires reading many data that we don't need.
+
+Another technique, called "two-phase I/O", instructs that each process reads also the data that are needed by other processes. After reading, the processes rearrange the blocks accordingly.
+
+MPI I/O allows us to read and write in many different parts of the same file without explicitly taking care of this.
+
+--
+
+In these timeplots you can see the scalability of the input and output time for the base case. Please note the logarithmic scale. The two architectures perform the same and reading is always a bit faster than writing.
+
+--
+
+In our implementation, we first converted the given text input files to binaries. Then, we used the MPI_File_read() to read the headers with the matrix dimensions.
+
+After reading the header, we define the displacement and a 2D subarray that maps the matrices to the file. We use this to set a view and then we use the blocking collective MPI IO operations.
+
+In order to see what we produced, we created a bash script that we provide.
+
+--
+
+Here you can see that the input files we use are the same with the ones provided,
+
+--
+--
+
+as well as the resulting output files.
+
+--
+--
+
+Our implementation scales much better than the provided one for big files. Again, reading behaves better than writing, that seems to have some local extrema.
+
+--
+
+The speedup we gained was amazing and in the largest files, Sandybridge seems to be favored more.
+
+--
+
+You can also see the difference in the tracing. Before, about 96% of the total MPI time was spent in communication and waiting in the IO part. Now, this takes only the 38% of the time and all the processes participate.
+
+--
+
+Closing, we saw that there is a good reason to use MPI Collectives, as well as MPI IO. Our code now performs much better and is better scalable. But is it truly scalable in truly big problems? Maybe another approach would be better, according to the specific problem.
+
+--
+
+That's all and thank you for your attention! :-)
